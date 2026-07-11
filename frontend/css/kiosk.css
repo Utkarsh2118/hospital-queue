@@ -10,24 +10,50 @@
 .kiosk__header {
   text-align: center;
   margin-bottom: var(--space-7);
+  position: relative;
 }
 
 .kiosk__eyebrow {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   font-size: 13px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-primary);
-  font-weight: 600;
-  margin-bottom: var(--space-2);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+
+.kiosk__eyebrow::before,
+.kiosk__eyebrow::after {
+  content: '';
+  width: 18px;
+  height: 1.5px;
+  background: var(--color-primary);
+  opacity: 0.5;
 }
 
 .kiosk__title {
   font-family: var(--font-display);
-  font-size: 40px;
+  font-size: clamp(34px, 5vw, 48px);
   font-weight: 600;
-  margin: 0;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-5);
   color: var(--color-ink);
+}
+
+.kiosk__header::after {
+  content: '';
+  display: block;
+  width: 120px;
+  height: 10px;
+  margin: 0 auto;
+  background-image: radial-gradient(circle at center, var(--color-line-strong) 0 1.6px, transparent 1.8px);
+  background-size: 12px 10px;
+  background-repeat: repeat-x;
+  background-position: center;
+  opacity: 0.8;
 }
 
 .kiosk__error {
@@ -77,8 +103,10 @@
 }
 
 .kiosk__dept-card {
+  position: relative;
   background: var(--color-card);
   border: 1px solid var(--color-line);
+  border-top: 3px solid var(--color-primary);
   border-radius: var(--radius-md);
   padding: var(--space-6) var(--space-5);
   display: flex;
@@ -86,12 +114,32 @@
   align-items: center;
   gap: var(--space-2);
   box-shadow: var(--shadow-card);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .kiosk__dept-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) rotate(-0.4deg);
   box-shadow: var(--shadow-lifted);
+}
+
+/* Cycle a small set of ticket-stock accent hues across cards so a grid of departments
+   doesn't read as one repeated component — order carries no meaning, it's just variety. */
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(3n+2) {
+  border-top-color: var(--color-gold);
+}
+
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(3n+2) .kiosk__dept-icon {
+  background: var(--color-gold-tint);
+  color: var(--color-gold);
+}
+
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(3n) {
+  border-top-color: var(--color-stamp);
+}
+
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(3n) .kiosk__dept-icon {
+  background: var(--color-emergency-tint);
+  color: var(--color-stamp);
 }
 
 .kiosk__dept-icon {
@@ -168,18 +216,21 @@
   background: var(--color-bg);
   font-weight: 600;
   color: var(--color-ink-soft);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
 .kiosk__priority-btn.is-active {
   border-color: var(--color-primary);
   background: var(--color-primary-tint);
   color: var(--color-primary-dark);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
 }
 
 .kiosk__priority-btn--emergency.is-active {
   border-color: var(--color-emergency);
   background: var(--color-emergency-tint);
   color: var(--color-emergency);
+  box-shadow: inset 0 0 0 1px var(--color-emergency);
 }
 
 .kiosk__submit {
@@ -190,16 +241,30 @@
   padding: var(--space-4);
   font-size: 17px;
   font-weight: 700;
+  box-shadow: 0 3px 0 var(--color-primary-dark), 0 6px 14px rgba(31, 58, 61, 0.18);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.kiosk__submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 var(--color-primary-dark), 0 10px 18px rgba(31, 58, 61, 0.2);
+}
+
+.kiosk__submit:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--color-primary-dark), 0 3px 8px rgba(31, 58, 61, 0.16);
 }
 
 .kiosk__submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .kiosk__submit--secondary {
   background: var(--color-ink);
   margin-top: var(--space-3);
+  box-shadow: 0 3px 0 #0f2325, 0 6px 14px rgba(31, 58, 61, 0.18);
 }
 
 .kiosk__live-status {

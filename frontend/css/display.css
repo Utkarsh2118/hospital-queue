@@ -1,6 +1,9 @@
 .board {
   min-height: 100%;
-  background: var(--color-ink);
+  background:
+    radial-gradient(circle at 15% 0%, rgba(45, 110, 110, 0.35) 0%, transparent 45%),
+    radial-gradient(circle at 85% 100%, rgba(184, 135, 60, 0.12) 0%, transparent 40%),
+    var(--color-ink);
   color: white;
   padding: var(--space-7) var(--space-8);
 }
@@ -65,8 +68,10 @@
 }
 
 .board__card {
+  position: relative;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 3px solid var(--color-primary-tint);
   border-radius: var(--radius-md);
   padding: var(--space-6);
   display: flex;
@@ -75,9 +80,23 @@
   transition: background 0.6s ease, border-color 0.6s ease;
 }
 
+.board__card::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background: var(--color-ink);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+}
+
 .board__card--flash {
   background: rgba(45, 110, 110, 0.35);
   border-color: var(--color-primary);
+  border-top-color: #ff8a6b;
 }
 
 .board__card--flash .board__number {

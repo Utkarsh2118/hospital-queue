@@ -87,10 +87,17 @@
 
 .admin__card {
   background: var(--color-card);
+  background-image: var(--paper-grain);
+  background-size: 4px 4px;
   border: 1px solid var(--color-line);
+  border-top: 3px solid var(--color-primary);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
   padding: var(--space-6);
+}
+
+.admin__card:nth-of-type(2) {
+  border-top-color: var(--color-gold);
 }
 
 .admin__card-title {
@@ -139,6 +146,18 @@
   padding: var(--space-3) var(--space-5);
   font-weight: 700;
   font-size: 14px;
+  box-shadow: 0 3px 0 var(--color-primary-dark), 0 6px 14px rgba(31, 58, 61, 0.16);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.admin__submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 var(--color-primary-dark), 0 10px 18px rgba(31, 58, 61, 0.18);
+}
+
+.admin__submit:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--color-primary-dark), 0 3px 8px rgba(31, 58, 61, 0.14);
 }
 
 .admin__list {

@@ -73,12 +73,31 @@
 .dash__stat-card {
   background: var(--color-card);
   border: 1px solid var(--color-line);
+  border-top: 3px solid var(--color-primary);
   border-radius: var(--radius-md);
   padding: var(--space-4);
   display: flex;
   align-items: center;
   gap: var(--space-3);
   box-shadow: var(--shadow-card);
+}
+
+.dash__stat-card:nth-of-type(2) {
+  border-top-color: var(--color-gold);
+}
+
+.dash__stat-card:nth-of-type(2) .dash__stat-icon {
+  background: var(--color-gold-tint);
+  color: var(--color-gold);
+}
+
+.dash__stat-card:nth-of-type(3) {
+  border-top-color: var(--color-stamp);
+}
+
+.dash__stat-card:nth-of-type(3) .dash__stat-icon {
+  background: var(--color-emergency-tint);
+  color: var(--color-stamp);
 }
 
 .dash__stat-icon {
@@ -105,10 +124,14 @@
 }
 
 .dash__now-serving {
+  position: relative;
   background: var(--color-card);
+  background-image: var(--paper-grain);
+  background-size: 4px 4px;
   border: 1px solid var(--color-line);
+  border-left: 4px solid var(--color-primary);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-lifted);
   padding: var(--space-6);
   display: flex;
   flex-direction: column;
@@ -124,9 +147,10 @@
 
 .dash__now-number {
   font-family: var(--font-mono);
-  font-size: 40px;
+  font-size: 48px;
   font-weight: 700;
   color: var(--color-primary-dark);
+  letter-spacing: -0.01em;
 }
 
 .dash__now-name {
@@ -162,6 +186,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  box-shadow: 0 3px 0 var(--color-primary-dark), 0 6px 14px rgba(31, 58, 61, 0.18);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .dash__call-next svg {
@@ -169,9 +195,20 @@
   height: 17px;
 }
 
+.dash__call-next:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 var(--color-primary-dark), 0 10px 18px rgba(31, 58, 61, 0.2);
+}
+
+.dash__call-next:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--color-primary-dark), 0 3px 8px rgba(31, 58, 61, 0.16);
+}
+
 .dash__call-next:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .dash__queue {
