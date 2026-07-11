@@ -1,8 +1,10 @@
 require('dotenv').config();
+
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
+
 const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
@@ -20,22 +22,38 @@ const io = new Server(server, {
   },
 });
 
-// Make io accessible in controllers via req.app.get('io')
 app.set('io', io);
 
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+// Home Route
+app.get('/', (req, res) => {
+  res.send(`
+    <h1>🏥 Hospital Queue Management System</h1>
+    <p>Backend is running successfully on Render.</p>
+    <p><a href="/api/health">Health Check</a></p>
+  `);
+});
 
+// Health Route
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Backend is running successfully'
+  });
+});
+
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/queue', queueRoutes);
 app.use('/api/users', userRoutes);
 
-// Socket.IO: clients join a "department:<id>" room to get live updates
-// for that department's queue (used by display screens & doctor dashboards)
+// Socket.IO
 io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+
   socket.on('join-department', (departmentId) => {
     socket.join(`department:${departmentId}`);
   });
@@ -43,10 +61,24 @@ io.on('connection', (socket) => {
   socket.on('leave-department', (departmentId) => {
     socket.leave(`department:${departmentId}`);
   });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
+
+// 404 Route
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
+  });
 });
 
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
-  server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
 });
