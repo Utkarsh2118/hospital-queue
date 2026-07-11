@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediQueue — Now Serving</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/display.css" />
+</head>
+<body>
+  <div class="board">
+    <header class="board__header">
+      <span class="icon-circle board__icon" id="buildingIconSlot"></span>
+      <div class="board__header-text">
+        <span class="board__eyebrow">MediQueue</span>
+        <h1 class="board__title">Now serving</h1>
+      </div>
+      <div class="board__clock-wrap">
+        <span id="clockTime" class="board__clock-time"></span>
+        <span id="clockDate" class="board__clock-date"></span>
+      </div>
+    </header>
+
+    <div id="boardGrid" class="board__grid"></div>
+
+    <div class="board__qr-corner">
+      <img id="qrImage" class="board__qr-image" alt="QR code to track your token on your phone" />
+      <span class="board__qr-caption">Scan to track your token</span>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/socket.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/display.js"></script>
+</body>
+</html>

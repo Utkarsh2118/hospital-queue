@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediQueue — Track My Token</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/kiosk.css" />
+  <link rel="stylesheet" href="css/track.css" />
+</head>
+<body>
+  <div class="kiosk kiosk--track">
+    <header class="kiosk__header">
+      <span class="kiosk__eyebrow">MediQueue</span>
+      <h1 class="kiosk__title">Track my token</h1>
+    </header>
+
+    <div id="errorBox" class="kiosk__error hidden"></div>
+
+    <!-- Lookup form (shown when we don't already know the token) -->
+    <div id="lookupPanel" class="kiosk__panel fade-in">
+      <p class="kiosk__prompt">Enter the token number printed on your ticket (e.g. GEN-004).</p>
+      <form id="lookupForm" class="kiosk__form">
+        <label class="kiosk__field">
+          <span>Token number</span>
+          <input type="text" id="tokenNumberInput" required placeholder="GEN-004" autocomplete="off" autocapitalize="characters" />
+        </label>
+        <button type="submit" id="lookupSubmitBtn" class="kiosk__submit">Check status</button>
+      </form>
+    </div>
+
+    <!-- Live status panel -->
+    <div id="statusPanel" class="kiosk__panel kiosk__panel--center fade-in hidden">
+      <div id="ticketContainer"></div>
+      <div id="liveStatus" class="kiosk__live-status hidden"></div>
+      <button id="lookupAnotherBtn" class="kiosk__submit kiosk__submit--secondary">Track a different token</button>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/track.js"></script>
+</body>
+</html>

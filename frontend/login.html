@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediQueue — Staff Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+<body>
+  <div class="login">
+    <div class="login__card">
+      <span class="login__eyebrow">MediQueue</span>
+      <h1 class="login__title">Staff sign in</h1>
+      <p class="login__subtitle">For doctors and administrators</p>
+
+      <div id="errorBox" class="login__error hidden"></div>
+
+      <form id="loginForm" class="login__form">
+        <label class="login__field">
+          <span>Email</span>
+          <input type="email" id="email" required placeholder="you@hospital.test" />
+        </label>
+        <label class="login__field">
+          <span>Password</span>
+          <div class="password-field-wrap">
+            <input type="password" id="password" required placeholder="••••••••" />
+            <button type="button" id="togglePasswordBtn" class="password-toggle" aria-label="Show password" aria-pressed="false">
+              <span id="passwordToggleIconSlot"></span>
+            </button>
+          </div>
+        </label>
+        <button type="submit" id="submitBtn" class="login__submit">Sign in</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

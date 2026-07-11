@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediQueue — Doctor Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="dash">
+    <header class="dash__header">
+      <div>
+        <span id="deptName" class="dash__eyebrow">Department</span>
+        <h1 id="welcomeTitle" class="dash__title">Welcome</h1>
+      </div>
+      <div class="dash__header-actions">
+        <button id="soundToggleBtn" class="dash__logout" aria-pressed="true">🔔 Sound on</button>
+        <button id="logoutBtn" class="dash__logout">Sign out</button>
+      </div>
+    </header>
+
+    <div id="errorBox" class="dash__error hidden"></div>
+
+    <section class="dash__stats">
+      <div class="dash__stat-card">
+        <span class="icon-circle dash__stat-icon" id="usersIconSlot"></span>
+        <div>
+          <span id="statServed" class="dash__stat-value">0</span>
+          <span class="dash__stat-label">Served today</span>
+        </div>
+      </div>
+      <div class="dash__stat-card">
+        <span class="icon-circle dash__stat-icon" id="clockIconSlot"></span>
+        <div>
+          <span id="statAvgWait" class="dash__stat-value">—</span>
+          <span class="dash__stat-label">Avg. wait</span>
+        </div>
+      </div>
+      <div class="dash__stat-card">
+        <span class="icon-circle dash__stat-icon" id="skipIconSlot"></span>
+        <div>
+          <span id="statSkipped" class="dash__stat-value">0</span>
+          <span class="dash__stat-label">Skipped</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="dash__now-serving">
+      <span class="dash__label">Now serving</span>
+      <div id="nowServingCard"></div>
+      <button id="callNextBtn" class="dash__call-next">
+        Call next patient <span id="arrowIconSlot" class="icon-circle"></span>
+      </button>
+    </section>
+
+    <section class="dash__queue">
+      <div class="dash__queue-header">
+        <div class="dash__tabs">
+          <button id="tabWaiting" class="dash__tab is-active">Waiting</button>
+          <button id="tabHistory" class="dash__tab">
+            <span class="icon-circle dash__tab-icon" id="historyIconSlot"></span>
+            History
+          </button>
+        </div>
+        <span id="queueCount" class="dash__queue-count">0</span>
+      </div>
+      <ul id="waitingList" class="dash__list"></ul>
+      <ul id="historyList" class="dash__list hidden"></ul>
+    </section>
+  </div>
+
+  <div id="skipModalOverlay" class="confirm-modal__overlay hidden">
+    <div class="confirm-modal">
+      <h2 class="confirm-modal__title">Skip this patient?</h2>
+      <p id="skipModalMessage" class="confirm-modal__message"></p>
+      <div class="confirm-modal__actions">
+        <button id="skipCancelBtn" class="confirm-modal__btn confirm-modal__btn--cancel">Cancel</button>
+        <button id="skipConfirmBtn" class="confirm-modal__btn confirm-modal__btn--confirm confirm-modal__btn--danger">
+          Skip patient
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/socket.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

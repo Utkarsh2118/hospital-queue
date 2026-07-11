@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediQueue — Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="admin">
+    <header class="admin__header">
+      <div>
+        <span class="admin__eyebrow">MediQueue</span>
+        <h1 class="admin__title">Admin panel</h1>
+      </div>
+      <div class="admin__header-actions">
+        <a class="admin__link" href="display.html" target="_blank" rel="noreferrer">Open display screen ↗</a>
+        <button id="logoutBtn" class="admin__logout">Sign out</button>
+      </div>
+    </header>
+
+    <div id="messageBox" class="admin__message hidden"></div>
+
+    <div class="admin__grid">
+      <section class="admin__card">
+        <h2 class="admin__card-title">Add a department</h2>
+        <form id="deptForm" class="admin__form">
+          <label class="admin__field">
+            <span>Name</span>
+            <input type="text" id="deptNameInput" required placeholder="e.g. Orthopedics" />
+          </label>
+          <div class="admin__field-row">
+            <label class="admin__field">
+              <span>Code</span>
+              <input type="text" id="deptCodeInput" required placeholder="ORTHO" />
+            </label>
+            <label class="admin__field">
+              <span>Token prefix</span>
+              <input type="text" id="deptPrefixInput" required maxlength="2" placeholder="O" />
+            </label>
+          </div>
+          <label class="admin__field">
+            <span>Room number</span>
+            <input type="text" id="deptRoomInput" placeholder="Room 4 (optional)" />
+          </label>
+          <button type="submit" class="admin__submit">Create department</button>
+        </form>
+        <div id="deptList" class="admin__list"></div>
+      </section>
+
+      <section class="admin__card">
+        <h2 class="admin__card-title">Add a doctor account</h2>
+        <form id="doctorForm" class="admin__form">
+          <label class="admin__field">
+            <span>Doctor name</span>
+            <input type="text" id="doctorNameInput" required placeholder="e.g. Anjali Mehta" />
+          </label>
+          <label class="admin__field">
+            <span>Email</span>
+            <input type="email" id="doctorEmailInput" required placeholder="doctor@hospital.test" />
+          </label>
+          <label class="admin__field">
+            <span>Temporary password</span>
+            <input type="text" id="doctorPasswordInput" required placeholder="Set an initial password" />
+          </label>
+          <label class="admin__field">
+            <span>Department</span>
+            <select id="doctorDeptSelect" required>
+              <option value="">Select department</option>
+            </select>
+          </label>
+          <button type="submit" class="admin__submit">Create doctor account</button>
+        </form>
+      </section>
+
+      <section class="admin__card admin__card--wide">
+        <h2 class="admin__card-title">Doctor accounts</h2>
+        <div id="doctorList" class="admin__list"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Edit department modal -->
+  <div id="editDeptModalOverlay" class="confirm-modal__overlay hidden">
+    <div class="confirm-modal">
+      <h2 class="confirm-modal__title">Edit department</h2>
+      <form id="editDeptForm" class="admin__form">
+        <label class="admin__field">
+          <span>Name</span>
+          <input type="text" id="editDeptNameInput" required />
+        </label>
+        <div class="admin__field-row">
+          <label class="admin__field">
+            <span>Code</span>
+            <input type="text" id="editDeptCodeInput" required />
+          </label>
+          <label class="admin__field">
+            <span>Token prefix</span>
+            <input type="text" id="editDeptPrefixInput" required maxlength="2" />
+          </label>
+        </div>
+        <label class="admin__field">
+          <span>Room number</span>
+          <input type="text" id="editDeptRoomInput" placeholder="Optional" />
+        </label>
+        <div class="confirm-modal__actions">
+          <button type="button" id="editDeptCancelBtn" class="confirm-modal__btn confirm-modal__btn--cancel">Cancel</button>
+          <button type="submit" class="confirm-modal__btn confirm-modal__btn--confirm">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete department confirm modal -->
+  <div id="deleteDeptModalOverlay" class="confirm-modal__overlay hidden">
+    <div class="confirm-modal">
+      <h2 class="confirm-modal__title">Remove this department?</h2>
+      <p id="deleteDeptMessage" class="confirm-modal__message"></p>
+      <div class="confirm-modal__actions">
+        <button id="deleteDeptCancelBtn" class="confirm-modal__btn confirm-modal__btn--cancel">Cancel</button>
+        <button id="deleteDeptConfirmBtn" class="confirm-modal__btn confirm-modal__btn--confirm confirm-modal__btn--danger">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset password modal -->
+  <div id="resetPasswordModalOverlay" class="confirm-modal__overlay hidden">
+    <div class="confirm-modal">
+      <h2 class="confirm-modal__title">Reset password</h2>
+      <p id="resetPasswordMessage" class="confirm-modal__message"></p>
+      <form id="resetPasswordForm" class="admin__form">
+        <label class="admin__field">
+          <span>New temporary password</span>
+          <input type="text" id="newPasswordInput" required minlength="4" placeholder="Set a new password" />
+        </label>
+        <div class="confirm-modal__actions">
+          <button type="button" id="resetPasswordCancelBtn" class="confirm-modal__btn confirm-modal__btn--cancel">Cancel</button>
+          <button type="submit" class="confirm-modal__btn confirm-modal__btn--confirm">Reset password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+.kiosk--track {
+  padding-top: var(--space-7);
+}
+
+.kiosk--track .kiosk__panel {
+  max-width: 420px;
+}
+
+.kiosk--track #tokenNumberInput {
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}

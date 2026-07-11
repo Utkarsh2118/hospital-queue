@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediQueue — Patient Check-in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/kiosk.css" />
+</head>
+<body>
+  <div class="kiosk">
+    <header class="kiosk__header">
+      <span class="kiosk__eyebrow">MediQueue</span>
+      <h1 class="kiosk__title">Patient check-in</h1>
+    </header>
+
+    <div id="errorBox" class="kiosk__error hidden"></div>
+
+    <!-- Step 1: Select department -->
+    <div id="stepSelectDept" class="kiosk__panel fade-in">
+      <p class="kiosk__prompt">Which department would you like to visit today?</p>
+      <div id="deptGrid" class="kiosk__dept-grid"></div>
+    </div>
+
+    <!-- Step 2: Patient details form -->
+    <div id="stepForm" class="kiosk__panel fade-in hidden">
+      <button id="backBtn" class="kiosk__back">← Change department</button>
+      <p class="kiosk__prompt">
+        Checking in to <strong id="selectedDeptName"></strong>
+      </p>
+      <form id="checkinForm" class="kiosk__form" novalidate>
+        <label class="kiosk__field">
+          <span>Full name *</span>
+          <input type="text" id="patientName" required placeholder="Enter your name" autocomplete="off" />
+          <span class="field-error-msg hidden" id="patientNameError"></span>
+        </label>
+        <div class="kiosk__field-row">
+          <label class="kiosk__field">
+            <span>Age</span>
+            <input type="number" id="patientAge" min="0" max="120" placeholder="Optional" />
+            <span class="field-error-msg hidden" id="patientAgeError"></span>
+          </label>
+          <label class="kiosk__field">
+            <span>Phone</span>
+            <input type="tel" id="patientPhone" placeholder="Optional" inputmode="tel" />
+            <span class="field-error-msg hidden" id="patientPhoneError"></span>
+          </label>
+        </div>
+        <label class="kiosk__field">
+          <span>Reason for visit</span>
+          <textarea id="symptoms" rows="2" placeholder="Briefly describe your symptoms (optional)"></textarea>
+        </label>
+
+        <div class="kiosk__priority">
+          <button type="button" id="priorityNormal" class="kiosk__priority-btn is-active">Regular visit</button>
+          <button type="button" id="priorityEmergency" class="kiosk__priority-btn kiosk__priority-btn--emergency">
+            This is an emergency
+          </button>
+        </div>
+
+        <button type="submit" id="submitBtn" class="kiosk__submit">Get my token</button>
+      </form>
+    </div>
+
+    <!-- Step 3: Ticket issued -->
+    <div id="stepTicket" class="kiosk__panel kiosk__panel--center fade-in hidden">
+      <p class="kiosk__prompt">You're checked in. Please take a seat and watch the display screen.</p>
+      <div id="ticketContainer"></div>
+      <div id="trackLinkContainer"></div>
+      <div id="liveStatus" class="kiosk__live-status hidden"></div>
+      <button id="newCheckinBtn" class="kiosk__submit kiosk__submit--secondary">Done — new check-in</button>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/kiosk.js"></script>
+</body>
+</html>

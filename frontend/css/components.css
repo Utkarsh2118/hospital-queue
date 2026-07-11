@@ -1,0 +1,407 @@
+/* ===== Ticket Stub — the signature "torn ticket" visual ===== */
+.ticket-stub {
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lifted);
+  width: 100%;
+  max-width: 340px;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+}
+
+.ticket-stub--lg {
+  max-width: 420px;
+}
+
+.ticket-stub__top,
+.ticket-stub__bottom {
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  position: relative;
+}
+
+.ticket-stub__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  font-weight: 600;
+}
+
+.ticket-stub__dept {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.ticket-stub__flag {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-6);
+  background: var(--color-emergency-tint);
+  color: var(--color-emergency);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.ticket-stub__number {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-primary-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-stub--emergency .ticket-stub__number {
+  color: var(--color-emergency);
+}
+
+.ticket-stub--lg .ticket-stub__number {
+  font-size: 64px;
+}
+
+.ticket-stub__name {
+  color: var(--color-ink-soft);
+  font-size: 14px;
+  margin-top: var(--space-1);
+}
+
+.ticket-stub__perforation {
+  position: relative;
+  height: 0;
+  border-top: 2px dashed var(--color-line-strong);
+  margin: 0 var(--space-4);
+}
+
+.ticket-stub__notch {
+  position: absolute;
+  top: -9px;
+  width: 18px;
+  height: 18px;
+  background: var(--color-bg);
+  border-radius: 50%;
+  border: 1px solid var(--color-line);
+}
+
+.ticket-stub__notch--left {
+  left: -27px;
+}
+
+.ticket-stub__notch--right {
+  right: -27px;
+}
+
+/* ===== Confirm Modal ===== */
+.confirm-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 58, 61, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  z-index: 100;
+  animation: overlay-fade-in 0.15s ease;
+}
+
+.confirm-modal__overlay.hidden {
+  display: none;
+}
+
+.confirm-modal {
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lifted);
+  padding: var(--space-6);
+  max-width: 360px;
+  width: 100%;
+  animation: modal-pop-in 0.18s ease;
+}
+
+.confirm-modal__title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0 0 var(--space-2);
+}
+
+.confirm-modal__message {
+  color: var(--color-ink-soft);
+  font-size: 14px;
+  margin: 0 0 var(--space-5);
+  line-height: 1.5;
+}
+
+.confirm-modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.confirm-modal__btn {
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+}
+
+.confirm-modal__btn--cancel {
+  background: var(--color-bg-alt);
+  color: var(--color-ink-soft);
+}
+
+.confirm-modal__btn--confirm {
+  background: var(--color-primary);
+  color: white;
+}
+
+.confirm-modal__btn--danger {
+  background: var(--color-emergency);
+}
+
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-pop-in {
+  from { opacity: 0; transform: scale(0.95) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ===== Skeleton loaders ===== */
+.skeleton-block {
+  background: linear-gradient(90deg, var(--color-line) 25%, var(--color-bg-alt) 50%, var(--color-line) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-block--circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+}
+
+.skeleton-block--text {
+  width: 70%;
+  height: 14px;
+}
+
+.skeleton-block--text-sm {
+  width: 45%;
+  height: 11px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===== Shared icon circle used across pages ===== */
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.icon-circle svg {
+  display: block;
+}
+
+/* ===== Fade/slide transition for step changes ===== */
+.fade-in {
+  animation: fade-slide-in 0.3s ease;
+}
+
+@keyframes fade-slide-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===== Toast notifications ===== */
+.toast-stack {
+  position: fixed;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: min(360px, calc(100vw - var(--space-5) * 2));
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: var(--color-ink);
+  color: white;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lifted);
+  font-size: 13.5px;
+  line-height: 1.4;
+  animation: toast-in 0.2s ease;
+}
+
+.toast--leaving {
+  animation: toast-out 0.18s ease forwards;
+}
+
+.toast--success {
+  background: var(--color-success);
+}
+
+.toast--error {
+  background: var(--color-emergency);
+}
+
+.toast__icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.toast__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.toast__message {
+  flex: 1;
+}
+
+.toast__close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toast-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(8px); }
+}
+
+/* ===== Field validation (inline errors) ===== */
+.field-invalid {
+  border-color: var(--color-emergency) !important;
+  background: var(--color-emergency-tint);
+}
+
+.field-error-msg {
+  color: var(--color-emergency);
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: -2px;
+}
+
+/* ===== Password visibility toggle ===== */
+.password-field-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field-wrap input {
+  width: 100%;
+  padding-right: 42px !important;
+}
+
+.password-toggle {
+  position: absolute;
+  right: var(--space-2);
+  background: none;
+  border: none;
+  color: var(--color-ink-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+}
+
+.password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.password-toggle:hover {
+  color: var(--color-ink-soft);
+}
+
+/* ===== Generic empty state (icon + message) ===== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  color: var(--color-ink-faint);
+  text-align: center;
+}
+
+.empty-state__icon {
+  width: 48px;
+  height: 48px;
+  background: var(--color-bg-alt);
+  color: var(--color-ink-faint);
+}
+
+.empty-state__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.empty-state__text {
+  font-size: 14px;
+  max-width: 260px;
+}
+
+/* ===== Tracking link / QR block (kiosk ticket, display board) ===== */
+.track-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 12.5px;
+  color: var(--color-ink-faint);
+  text-align: center;
+  justify-content: center;
+}
+
+.track-link a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.track-link svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
