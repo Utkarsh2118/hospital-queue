@@ -292,3 +292,22 @@
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.4; transform: scale(0.7); }
 }
+
+.kiosk__footer {
+  text-align: center;
+  padding: var(--space-6) 0 var(--space-3);
+}
+
+.kiosk__footer a {
+  color: var(--color-ink-faint);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px dotted var(--color-ink-faint);
+  padding-bottom: 1px;
+}
+
+.kiosk__footer a:hover {
+  color: var(--color-ink-soft);
+  border-bottom-color: var(--color-ink-soft);
+}

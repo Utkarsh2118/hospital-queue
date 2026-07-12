@@ -46,10 +46,10 @@ function renderBoards() {
         ${
           nowServing
             ? `<span class="board__number ${nowServing.priority === 'emergency' ? 'board__number--emergency' : ''}">${nowServing.tokenNumber}</span>`
-            : '<span class="board__number board__number--idle">—</span>'
+            : '<span class="board__number board__number--idle">—</span><span class="board__idle-label">No patient called yet</span>'
         }
       </div>
-      <div class="board__waiting">${waitingCount} waiting</div>
+      <div class="board__waiting"><span class="board__waiting-count">${waitingCount}</span> waiting</div>
     `;
     boardGrid.appendChild(card);
   });

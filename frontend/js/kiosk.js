@@ -121,8 +121,12 @@ const fieldValidators = [
     input: patientNameInput,
     errorEl: document.getElementById('patientNameError'),
     validate: (v) => {
-      if (!v.trim()) return 'Please enter the patient name.';
-      if (v.trim().length < 2) return 'Name looks too short.';
+      const trimmed = v.trim();
+      if (!trimmed) return 'Please enter the patient name.';
+      if (trimmed.length < 2) return 'Name looks too short.';
+      if (!/^[A-Za-z\u0900-\u097F][A-Za-z\u0900-\u097F\s.'-]{1,49}$/.test(trimmed)) {
+        return 'Name should only contain letters.';
+      }
       return '';
     },
   },
@@ -141,12 +145,21 @@ const fieldValidators = [
     errorEl: document.getElementById('patientPhoneError'),
     validate: (v) => {
       if (!v.trim()) return ''; // optional
-      const digits = v.replace(/[\s-]/g, '');
-      if (!/^\+?\d{7,15}$/.test(digits)) return 'Enter a valid phone number.';
+      const digits = v.replace(/[\s-]/g, '').replace(/^\+?91/, '');
+      if (!/^[6-9]\d{9}$/.test(digits)) return 'Enter a valid 10-digit mobile number.';
+      if (/^(\d)\1{9}$/.test(digits)) return 'That number doesn\'t look real — please check it.';
       return '';
     },
   },
 ];
+
+// Phone field: strip anything that isn't a digit as the visitor types, and
+// cap length at 10 — this is what actually stops "123" or letters from ever
+// reaching the request, not just the on-blur message.
+patientPhoneInput.addEventListener('input', () => {
+  const cleaned = patientPhoneInput.value.replace(/[^\d]/g, '').slice(0, 10);
+  if (cleaned !== patientPhoneInput.value) patientPhoneInput.value = cleaned;
+});
 
 function validateField(field) {
   const message = field.validate(field.input.value);

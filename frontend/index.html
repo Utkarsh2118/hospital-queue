@@ -49,7 +49,7 @@
           </label>
           <label class="kiosk__field">
             <span>Phone</span>
-            <input type="tel" id="patientPhone" placeholder="Optional" inputmode="tel" />
+            <input type="tel" id="patientPhone" placeholder="10-digit mobile (optional)" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" />
             <span class="field-error-msg hidden" id="patientPhoneError"></span>
           </label>
         </div>
@@ -78,6 +78,10 @@
       <button id="newCheckinBtn" class="kiosk__submit kiosk__submit--secondary">Done — new check-in</button>
     </div>
   </div>
+
+  <footer class="kiosk__footer">
+    <a href="login.html">Staff login</a>
+  </footer>
 
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
