@@ -363,7 +363,9 @@ function renderLiveStatus(status, position) {
   } else if (status === 'in-progress') {
     liveStatus.innerHTML = 'Your turn — please proceed to the room now.';
   } else if (status === 'completed') {
-    liveStatus.innerHTML = 'Visit marked as completed.';
+    const feedbackUrl = new URL('feedback.html', window.location.href);
+    feedbackUrl.searchParams.set('token', issuedToken.tokenNumber);
+    liveStatus.innerHTML = `Visit marked as completed. <a class="kiosk__feedback-link" href="${feedbackUrl.toString()}">Rate your visit →</a>`;
     stopStatusPolling();
   }
 }
