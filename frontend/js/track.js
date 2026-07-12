@@ -30,7 +30,7 @@ function renderTicket(token) {
   const isEmergency = token.priority === 'emergency';
   const deptName = (token.department && token.department.name) || '';
   ticketContainer.innerHTML = `
-    <div class="ticket-stub ticket-stub--lg ${isEmergency ? 'ticket-stub--emergency' : ''}">
+    <div class="ticket-stub ticket-stub--lg ticket-print-in ${isEmergency ? 'ticket-stub--emergency' : ''}">
       <div class="ticket-stub__top">
         <span class="ticket-stub__label">Department</span>
         <span class="ticket-stub__dept">${deptName}</span>
@@ -49,13 +49,18 @@ function renderTicket(token) {
   `;
 }
 
+const AVG_MINUTES_PER_PATIENT = 6;
+
 function renderLiveStatus(status, position) {
   liveStatus.classList.remove('hidden');
   if (status === 'waiting' && position) {
+    const ahead = position - 1;
+    const etaMinutes = ahead * AVG_MINUTES_PER_PATIENT;
+    const etaText = ahead > 0 ? ` · <span class="kiosk__eta">~${etaMinutes} min</span>` : '';
     liveStatus.innerHTML =
       position === 1
-        ? '<span class="kiosk__live-dot"></span> You\'re next in line'
-        : `<span class="kiosk__live-dot"></span> ${position - 1} ${position - 1 === 1 ? 'patient' : 'patients'} ahead of you`;
+        ? `<span class="kiosk__live-dot"></span> You're next in line${etaText}`
+        : `<span class="kiosk__live-dot"></span> ${ahead} ${ahead === 1 ? 'patient' : 'patients'} ahead of you${etaText}`;
   } else if (status === 'in-progress') {
     liveStatus.innerHTML = 'Your turn — please proceed to the room now.';
   } else if (status === 'completed') {

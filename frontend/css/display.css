@@ -63,6 +63,32 @@
   font-size: 14px;
 }
 
+.board__sound-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: var(--space-5);
+  flex-shrink: 0;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.board__sound-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.board__sound-toggle.is-active {
+  color: var(--color-primary-tint);
+  border-color: var(--color-primary-tint);
+  background: rgba(79, 179, 165, 0.14);
+}
+
 .board__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -116,16 +142,50 @@
   background: rgba(45, 110, 110, 0.35);
   border-color: var(--color-primary);
   border-top-color: #ff8a6b;
+  animation: card-glow-pulse 1s ease-in-out 2;
 }
 
 .board__card--flash .board__number {
-  animation: number-pop 0.5s ease;
+  animation: number-pop 0.6s ease;
+}
+
+.board__card--flash .board__now-ring {
+  animation: ring-expand 1.2s ease-out 2;
+}
+
+.board__now-ring {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary-tint);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes ring-expand {
+  0% { opacity: 0.9; transform: scale(0.6); }
+  100% { opacity: 0; transform: scale(2.4); }
+}
+
+@keyframes card-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(79, 179, 165, 0); }
+  50% { box-shadow: 0 0 0 3px rgba(79, 179, 165, 0.5), 0 0 40px rgba(79, 179, 165, 0.35); }
 }
 
 @keyframes number-pop {
   0% { transform: scale(1); }
-  40% { transform: scale(1.12); }
+  35% { transform: scale(1.22); }
+  60% { transform: scale(0.96); }
   100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board__card--flash,
+  .board__card--flash .board__number,
+  .board__card--flash .board__now-ring {
+    animation: none;
+  }
 }
 
 .board__card-head {
@@ -159,6 +219,7 @@
 }
 
 .board__now {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -208,6 +269,55 @@
   font-weight: 700;
 }
 
+/* ===== "Up next" chip list — auto-scrolls (marquee) when there are more
+   tokens than comfortably fit on one line ===== */
+.board__upnext {
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: var(--space-3);
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+
+.board__upnext-track {
+  display: flex;
+  gap: var(--space-2);
+  width: max-content;
+}
+
+.board__upnext--scroll .board__upnext-track {
+  animation: upnext-scroll 10s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board__upnext--scroll .board__upnext-track {
+    animation: none;
+    overflow-x: auto;
+  }
+}
+
+@keyframes upnext-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.board__upnext-chip {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+.board__upnext-chip--emergency {
+  color: #ff8a6b;
+  border-color: rgba(255, 138, 107, 0.4);
+  background: rgba(255, 138, 107, 0.12);
+}
+
 .board__qr-corner {
   position: fixed;
   right: var(--space-6);
@@ -238,7 +348,67 @@
   line-height: 1.3;
 }
 
+@media (max-width: 900px) {
+  .board {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .board__title {
+    font-size: 28px;
+  }
+
+  .board__grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .board__number {
+    font-size: 56px;
+  }
+}
+
 @media (max-width: 640px) {
+  .board {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .board__header {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+
+  .board__header-text {
+    order: 1;
+  }
+
+  .board__clock-wrap {
+    order: 2;
+    text-align: left;
+  }
+
+  .board__sound-toggle {
+    order: 3;
+    margin-left: auto;
+  }
+
+  .board__title {
+    font-size: 24px;
+  }
+
+  .board__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .board__card {
+    min-height: unset;
+    padding: var(--space-5);
+  }
+
+  .board__number {
+    font-size: 48px;
+  }
+
   .board__qr-corner {
     position: static;
     margin-top: var(--space-6);

@@ -16,6 +16,11 @@
   <link rel="stylesheet" href="css/track.css" />
 </head>
 <body>
+  <div class="util-bar">
+    <button id="textSizeToggle" class="util-btn util-btn--text" type="button" title="Large text mode" aria-pressed="false">A+</button>
+    <button id="themeToggle" class="util-btn" type="button" title="Toggle dark mode" aria-pressed="false"></button>
+  </div>
+
   <div class="kiosk kiosk--track">
     <header class="kiosk__header">
       <span class="kiosk__eyebrow">MediQueue</span>
@@ -45,6 +50,7 @@
   </div>
 
   <script src="js/config.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/api.js"></script>
   <script src="js/icons.js"></script>
   <script src="js/toast.js"></script>
