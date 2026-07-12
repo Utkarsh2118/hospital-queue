@@ -15,6 +15,11 @@
   <link rel="stylesheet" href="css/admin.css" />
 </head>
 <body>
+  <div class="util-bar">
+    <button id="textSizeToggle" class="util-btn util-btn--text" type="button" title="Large text mode" aria-pressed="false">A+</button>
+    <button id="themeToggle" class="util-btn" type="button" title="Toggle dark mode" aria-pressed="false"></button>
+  </div>
+
   <div class="admin">
     <header class="admin__header">
       <div>
@@ -28,6 +33,25 @@
     </header>
 
     <div id="messageBox" class="admin__message hidden"></div>
+
+    <section class="admin__card admin__card--wide">
+      <h2 class="admin__card-title">Today's analytics</h2>
+      <div class="analytics__summary" id="analyticsSummary"></div>
+      <div class="analytics__charts">
+        <div class="analytics__chart-block">
+          <h3 class="analytics__chart-title">Patients served by department</h3>
+          <div id="chartServed" class="analytics__chart"></div>
+        </div>
+        <div class="analytics__chart-block">
+          <h3 class="analytics__chart-title">Average wait by department (min)</h3>
+          <div id="chartWait" class="analytics__chart"></div>
+        </div>
+        <div class="analytics__chart-block analytics__chart-block--wide">
+          <h3 class="analytics__chart-title">Busiest hours today (check-ins)</h3>
+          <div id="chartHours" class="analytics__chart"></div>
+        </div>
+      </div>
+    </section>
 
     <div class="admin__grid">
       <section class="admin__card">
@@ -150,6 +174,7 @@
   </div>
 
   <script src="js/config.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/icons.js"></script>

@@ -261,6 +261,140 @@ if (user) {
     window.location.href = 'login.html';
   });
 
+  // ===== Analytics (item #12) =====
+  // Built entirely from endpoints the doctor dashboard already uses
+  // (per-department stats + today's history) — no backend changes needed.
+  const analyticsSummary = document.getElementById('analyticsSummary');
+  const chartServed = document.getElementById('chartServed');
+  const chartWait = document.getElementById('chartWait');
+  const chartHours = document.getElementById('chartHours');
+
+  function renderBarChart(container, items, { suffix = '', color = 'var(--color-primary)' } = {}) {
+    if (!items.length) {
+      container.innerHTML = `<p class="analytics__empty">No data yet today.</p>`;
+      return;
+    }
+    const max = Math.max(...items.map((i) => i.value), 1);
+    container.innerHTML = `
+      <div class="analytics__bars">
+        ${items
+          .map(
+            (i) => `
+          <div class="analytics__bar-row">
+            <span class="analytics__bar-label" title="${i.label}">${i.label}</span>
+            <div class="analytics__bar-track">
+              <div class="analytics__bar-fill" style="width:${Math.max((i.value / max) * 100, i.value > 0 ? 3 : 0)}%; background:${color}"></div>
+            </div>
+            <span class="analytics__bar-value">${i.value}${suffix}</span>
+          </div>`
+          )
+          .join('')}
+      </div>
+    `;
+  }
+
+  function renderSummary(stats) {
+    analyticsSummary.innerHTML = `
+      <div class="analytics__stat">
+        <span class="analytics__stat-value">${stats.totalServed}</span>
+        <span class="analytics__stat-label">Served today</span>
+      </div>
+      <div class="analytics__stat">
+        <span class="analytics__stat-value">${stats.totalWaiting}</span>
+        <span class="analytics__stat-label">Waiting now</span>
+      </div>
+      <div class="analytics__stat">
+        <span class="analytics__stat-value">${stats.overallAvgWait !== null ? stats.overallAvgWait + ' min' : '—'}</span>
+        <span class="analytics__stat-label">Avg. wait (all depts)</span>
+      </div>
+      <div class="analytics__stat">
+        <span class="analytics__stat-value">${stats.busiestHourLabel}</span>
+        <span class="analytics__stat-label">Busiest hour</span>
+      </div>
+    `;
+  }
+
+  async function loadAnalytics() {
+    try {
+      const departments = await api.get('/departments');
+      if (departments.length === 0) {
+        analyticsSummary.innerHTML = '';
+        [chartServed, chartWait, chartHours].forEach((el) => {
+          el.innerHTML = `<p class="analytics__empty">Add a department to see analytics.</p>`;
+        });
+        return;
+      }
+
+      const perDept = await Promise.all(
+        departments.map(async (dept) => {
+          const [stats, history, queue] = await Promise.all([
+            api.get(`/queue/${dept._id}/stats`),
+            api.get(`/queue/${dept._id}/history`),
+            api.get(`/queue/${dept._id}`),
+          ]);
+          return { dept, stats, history: history.history || [], waitingCount: queue.waitingCount || 0 };
+        })
+      );
+
+      // --- Served-by-department chart ---
+      renderBarChart(
+        chartServed,
+        perDept.map((d) => ({ label: d.dept.name, value: d.stats.servedToday || 0 })),
+        { color: 'var(--color-primary)' }
+      );
+
+      // --- Avg wait by department chart ---
+      renderBarChart(
+        chartWait,
+        perDept
+          .filter((d) => d.stats.avgWaitMinutes !== null)
+          .map((d) => ({ label: d.dept.name, value: d.stats.avgWaitMinutes })),
+        { suffix: ' min', color: 'var(--color-gold)' }
+      );
+
+      // --- Busiest hours chart (bucket every check-in today by hour) ---
+      const hourCounts = new Array(24).fill(0);
+      perDept.forEach((d) => {
+        d.history.forEach((t) => {
+          const h = new Date(t.createdAt).getHours();
+          hourCounts[h] += 1;
+        });
+      });
+      const activeHours = hourCounts
+        .map((count, h) => ({ label: formatHour(h), value: count, hour: h }))
+        .filter((h) => h.value > 0);
+      renderBarChart(chartHours, activeHours, { color: 'var(--color-stamp)' });
+
+      // --- Summary stats ---
+      const totalServed = perDept.reduce((sum, d) => sum + (d.stats.servedToday || 0), 0);
+      const totalWaiting = perDept.reduce((sum, d) => sum + d.waitingCount, 0);
+      const withWait = perDept.filter((d) => d.stats.avgWaitMinutes !== null);
+      const overallAvgWait = withWait.length
+        ? Math.round(withWait.reduce((sum, d) => sum + d.stats.avgWaitMinutes, 0) / withWait.length)
+        : null;
+      const busiest = activeHours.reduce((max, h) => (h.value > (max?.value || 0) ? h : max), null);
+
+      renderSummary({
+        totalServed,
+        totalWaiting,
+        overallAvgWait,
+        busiestHourLabel: busiest ? busiest.label : '—',
+      });
+    } catch (err) {
+      analyticsSummary.innerHTML = '';
+      [chartServed, chartWait, chartHours].forEach((el) => {
+        el.innerHTML = `<p class="analytics__empty">Could not load analytics.</p>`;
+      });
+    }
+  }
+
+  function formatHour(h) {
+    const period = h < 12 ? 'AM' : 'PM';
+    const hour12 = h % 12 === 0 ? 12 : h % 12;
+    return `${hour12} ${period}`;
+  }
+
   loadDepartments();
   loadDoctors();
+  loadAnalytics();
 }
