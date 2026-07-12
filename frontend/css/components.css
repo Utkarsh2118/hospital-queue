@@ -18,6 +18,18 @@
   max-width: 420px;
 }
 
+@media (max-width: 480px) {
+  .ticket-stub,
+  .ticket-stub--lg {
+    max-width: 100%;
+  }
+
+  .ticket-stub__top,
+  .ticket-stub__bottom {
+    padding: var(--space-4) var(--space-4);
+  }
+}
+
 .ticket-stub__top,
 .ticket-stub__bottom {
   padding: var(--space-5) var(--space-6);

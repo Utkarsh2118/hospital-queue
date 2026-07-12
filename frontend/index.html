@@ -13,13 +13,36 @@
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/kiosk.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
 </head>
 <body>
+  <div class="util-bar">
+    <button id="textSizeToggle" class="util-btn util-btn--text" type="button" title="Large text mode" aria-pressed="false">A+</button>
+    <button id="themeToggle" class="util-btn" type="button" title="Toggle dark mode" aria-pressed="false"></button>
+  </div>
+
   <div class="kiosk">
     <header class="kiosk__header">
       <span class="kiosk__eyebrow">MediQueue</span>
       <h1 class="kiosk__title">Patient check-in</h1>
     </header>
+
+    <nav class="kiosk__stepper" id="kioskStepper" aria-label="Check-in progress">
+      <div class="kiosk__step is-active" data-step="1">
+        <span class="kiosk__step-dot">1</span>
+        <span class="kiosk__step-label">Department</span>
+      </div>
+      <span class="kiosk__step-line"><span></span></span>
+      <div class="kiosk__step" data-step="2">
+        <span class="kiosk__step-dot">2</span>
+        <span class="kiosk__step-label">Your details</span>
+      </div>
+      <span class="kiosk__step-line"><span></span></span>
+      <div class="kiosk__step" data-step="3">
+        <span class="kiosk__step-dot">3</span>
+        <span class="kiosk__step-label">Token</span>
+      </div>
+    </nav>
 
     <div id="errorBox" class="kiosk__error hidden"></div>
 
@@ -84,6 +107,7 @@
   </footer>
 
   <script src="js/config.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/api.js"></script>
   <script src="js/icons.js"></script>
   <script src="js/toast.js"></script>

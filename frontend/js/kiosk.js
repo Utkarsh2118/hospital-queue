@@ -34,11 +34,26 @@ function clearError() {
   errorBox.classList.add('hidden');
 }
 
+const kioskStepper = document.getElementById('kioskStepper');
+const stepperEls = kioskStepper ? [...kioskStepper.querySelectorAll('.kiosk__step')] : [];
+
+function updateStepper(stepNumber) {
+  stepperEls.forEach((el) => {
+    const n = Number(el.dataset.step);
+    el.classList.toggle('is-active', n === stepNumber);
+    el.classList.toggle('is-done', n < stepNumber);
+  });
+}
+
 function showStep(step) {
   stepSelectDept.classList.add('hidden');
   stepForm.classList.add('hidden');
   stepTicket.classList.add('hidden');
   step.classList.remove('hidden');
+
+  if (step === stepSelectDept) updateStepper(1);
+  if (step === stepForm) updateStepper(2);
+  if (step === stepTicket) updateStepper(3);
 
   // Auto-focus the first field of whichever step just became visible so
   // kiosk visitors can start typing (or pressing Enter through the form)
@@ -255,7 +270,7 @@ checkinForm.addEventListener('submit', async (e) => {
 function renderTicket() {
   const isEmergency = issuedToken.priority === 'emergency';
   ticketContainer.innerHTML = `
-    <div class="ticket-stub ticket-stub--lg ${isEmergency ? 'ticket-stub--emergency' : ''}">
+    <div class="ticket-stub ticket-stub--lg ticket-print-in ${isEmergency ? 'ticket-stub--emergency' : ''}">
       <div class="ticket-stub__top">
         <span class="ticket-stub__label">Department</span>
         <span class="ticket-stub__dept">${selectedDept.name}</span>
@@ -270,19 +285,43 @@ function renderTicket() {
         <span class="ticket-stub__number">${issuedToken.tokenNumber}</span>
         <span class="ticket-stub__name">${issuedToken.patientName}</span>
       </div>
+      <div class="ticket-qr" id="ticketQr"></div>
     </div>
   `;
+  renderQrCode();
 }
 
-// ===== Phone tracking link (no QR library — just the plain track.html URL,
-// carrying the token number, that a visitor can also type in by hand) =====
-function renderTrackLink() {
+// ===== QR code (loaded via qrcode-generator CDN script) linking straight
+// to the tracking page — falls back silently to just the text link below
+// if the library hasn't loaded yet for any reason. =====
+function renderQrCode() {
+  const qrEl = document.getElementById('ticketQr');
+  if (!qrEl || typeof qrcode === 'undefined') return;
+  const url = trackUrlFor(issuedToken.tokenNumber);
+  try {
+    const qr = qrcode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    qrEl.innerHTML = qr.createSvgTag({ scalable: true });
+    qrEl.insertAdjacentHTML('beforeend', '<span>Scan to track on your phone</span>');
+  } catch {
+    // Silent fail — the plain link below still works.
+  }
+}
+
+function trackUrlFor(tokenNumber) {
   const url = new URL('track.html', window.location.href);
-  url.searchParams.set('token', issuedToken.tokenNumber);
+  url.searchParams.set('token', tokenNumber);
+  return url.toString();
+}
+
+// ===== Phone tracking link (plain text URL as a fallback/companion to the QR code) =====
+function renderTrackLink() {
+  const url = trackUrlFor(issuedToken.tokenNumber);
   trackLinkContainer.innerHTML = `
     <p class="track-link">
       ${iconSvg('smartphone')}
-      <span>Track on your phone: <a href="${url.toString()}" target="_blank" rel="noreferrer">${url.toString()}</a></span>
+      <span>Track on your phone: <a href="${url}" target="_blank" rel="noreferrer">${url}</a></span>
     </p>
   `;
 }
@@ -307,13 +346,20 @@ async function pollTokenStatus() {
   }
 }
 
+// Rough average consulting time per patient, used only to give visitors a
+// friendly ballpark ETA — not a guarantee, and intentionally conservative.
+const AVG_MINUTES_PER_PATIENT = 6;
+
 function renderLiveStatus(status, position) {
   liveStatus.classList.remove('hidden');
   if (status === 'waiting' && position) {
+    const ahead = position - 1;
+    const etaMinutes = ahead * AVG_MINUTES_PER_PATIENT;
+    const etaText = ahead > 0 ? ` · <span class="kiosk__eta">~${etaMinutes} min</span>` : '';
     liveStatus.innerHTML =
       position === 1
-        ? '<span class="kiosk__live-dot"></span> You\'re next in line'
-        : `<span class="kiosk__live-dot"></span> ${position - 1} ${position - 1 === 1 ? 'patient' : 'patients'} ahead of you`;
+        ? `<span class="kiosk__live-dot"></span> You're next in line${etaText}`
+        : `<span class="kiosk__live-dot"></span> ${ahead} ${ahead === 1 ? 'patient' : 'patients'} ahead of you${etaText}`;
   } else if (status === 'in-progress') {
     liveStatus.innerHTML = 'Your turn — please proceed to the room now.';
   } else if (status === 'completed') {

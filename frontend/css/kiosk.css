@@ -1,10 +1,59 @@
 .kiosk {
+  position: relative;
   min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: var(--space-8) var(--space-5) var(--space-8);
   background: radial-gradient(circle at top, var(--color-bg-alt) 0%, var(--color-bg) 60%);
+  overflow: hidden;
+}
+
+/* Soft floating color blobs — purely decorative, sit behind everything */
+.kiosk::before,
+.kiosk::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+  animation: blob-float 14s ease-in-out infinite;
+}
+
+.kiosk::before {
+  width: 320px;
+  height: 320px;
+  background: var(--color-primary-tint);
+  top: -120px;
+  left: -100px;
+}
+
+.kiosk::after {
+  width: 260px;
+  height: 260px;
+  background: var(--color-gold-tint);
+  bottom: -100px;
+  right: -80px;
+  animation-delay: -7s;
+}
+
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -24px) scale(1.08); }
+}
+
+.kiosk > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kiosk::before,
+  .kiosk::after {
+    animation: none;
+  }
 }
 
 .kiosk__header {
@@ -54,6 +103,92 @@
   background-repeat: repeat-x;
   background-position: center;
   opacity: 0.8;
+}
+
+/* ===== Progress stepper ===== */
+.kiosk__stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  width: 100%;
+  max-width: 420px;
+}
+
+.kiosk__step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.kiosk__step-dot {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-line-strong);
+  background: var(--color-card);
+  color: var(--color-ink-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.kiosk__step-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-ink-faint);
+  white-space: nowrap;
+  display: none;
+}
+
+.kiosk__step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--color-line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.kiosk__step-line span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--color-primary);
+  transition: width 0.35s ease;
+}
+
+.kiosk__step.is-active .kiosk__step-dot {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: white;
+  transform: scale(1.08);
+}
+
+.kiosk__step.is-active .kiosk__step-label {
+  color: var(--color-primary-dark);
+}
+
+.kiosk__step.is-done .kiosk__step-dot {
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
+  color: var(--color-primary-dark);
+}
+
+.kiosk__step.is-done .kiosk__step-line span {
+  width: 100%;
+}
+
+@media (min-width: 520px) {
+  .kiosk__step-label {
+    display: inline;
+  }
 }
 
 .kiosk__error {
@@ -115,11 +250,38 @@
   gap: var(--space-2);
   box-shadow: var(--shadow-card);
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  opacity: 0;
+  animation: dept-card-in 0.4s ease forwards;
+}
+
+/* Stagger each card's entrance slightly so the grid feels alive, not dumped on screen */
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(1) { animation-delay: 0.02s; }
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(2) { animation-delay: 0.08s; }
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(3) { animation-delay: 0.14s; }
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(4) { animation-delay: 0.2s; }
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(5) { animation-delay: 0.26s; }
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(6) { animation-delay: 0.32s; }
+.kiosk__dept-grid .kiosk__dept-card:nth-of-type(n+7) { animation-delay: 0.36s; }
+
+@keyframes dept-card-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .kiosk__dept-card:hover {
-  transform: translateY(-3px) rotate(-0.4deg);
+  transform: translateY(-4px) rotate(-0.4deg);
   box-shadow: var(--shadow-lifted);
+}
+
+.kiosk__dept-card:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kiosk__dept-card {
+    opacity: 1;
+    animation: none;
+  }
 }
 
 /* Cycle a small set of ticket-stock accent hues across cards so a grid of departments
@@ -310,4 +472,138 @@
 .kiosk__footer a:hover {
   color: var(--color-ink-soft);
   border-bottom-color: var(--color-ink-soft);
+}
+
+/* ===== Ticket "printing" entrance ===== */
+.ticket-print-in {
+  animation: ticket-print 0.5s cubic-bezier(0.2, 0.8, 0.3, 1);
+  transform-origin: top center;
+}
+
+@keyframes ticket-print {
+  0% { opacity: 0; transform: translateY(-40px) scaleY(0.4); }
+  60% { opacity: 1; transform: translateY(4px) scaleY(1.02); }
+  100% { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket-print-in {
+    animation: fade-slide-in 0.3s ease;
+  }
+}
+
+/* ===== QR code block on the ticket ===== */
+.ticket-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5) 0;
+}
+
+.ticket-qr svg {
+  width: 96px;
+  height: 96px;
+  background: white;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.ticket-qr span {
+  font-size: 11px;
+  color: var(--color-ink-faint);
+  text-align: center;
+}
+
+/* ===== Wait-time estimate pill ===== */
+.kiosk__eta {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+/* =========================================================
+   Responsive — tablet and mobile
+   ========================================================= */
+@media (max-width: 900px) {
+  .kiosk {
+    padding: var(--space-7) var(--space-4) var(--space-7);
+  }
+}
+
+@media (max-width: 640px) {
+  .kiosk {
+    padding: var(--space-6) var(--space-3) var(--space-6);
+  }
+
+  .kiosk__header {
+    margin-bottom: var(--space-5);
+  }
+
+  .kiosk__title {
+    font-size: clamp(26px, 7vw, 34px);
+    margin-bottom: var(--space-3);
+  }
+
+  .kiosk__prompt {
+    font-size: 15.5px;
+  }
+
+  .kiosk__dept-grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .kiosk__dept-card {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .kiosk__dept-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .kiosk__dept-name {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .kiosk__form {
+    padding: var(--space-4);
+  }
+
+  .kiosk__field-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .kiosk__priority {
+    grid-template-columns: 1fr;
+  }
+
+  .kiosk__submit {
+    padding: var(--space-3) var(--space-4);
+    font-size: 16px;
+  }
+
+  .kiosk__stepper {
+    max-width: 100%;
+  }
+
+  .kiosk::before,
+  .kiosk::after {
+    filter: blur(40px);
+    opacity: 0.25;
+  }
+}
+
+@media (max-width: 400px) {
+  .kiosk__dept-grid {
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  }
+
+  .ticket-stub--lg .ticket-stub__number {
+    font-size: 52px;
+  }
 }

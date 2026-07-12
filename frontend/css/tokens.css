@@ -49,6 +49,33 @@
 
   /* Fine paper grain — layered under card backgrounds so nothing reads as flat vector fill */
   --paper-grain: radial-gradient(rgba(31, 58, 61, 0.05) 0.6px, transparent 0.6px);
+
+  /* Accessibility text scale — multiplied across the kiosk when large-text mode is on */
+  --text-scale: 1;
+}
+
+/* ===== Dark theme ===== */
+[data-theme='dark'] {
+  --color-bg: #10201f;
+  --color-bg-alt: #16302d;
+  --color-card: #17302e;
+  --color-paper: #17302e;
+  --color-ink: #eaf3ee;
+  --color-ink-soft: #a9c2bc;
+  --color-ink-faint: #74928c;
+  --color-primary: #4fb3a5;
+  --color-primary-dark: #7fd6c8;
+  --color-primary-tint: #1d3d38;
+  --color-emergency: #ff8a68;
+  --color-emergency-tint: #3a231c;
+  --color-success: #7fce9f;
+  --color-success-tint: #1c3628;
+  --color-line: #274642;
+  --color-line-strong: #3a5c56;
+  --color-stamp: #ff9c7a;
+  --color-gold: #e0b565;
+  --color-gold-tint: #3a3120;
+  --paper-grain: radial-gradient(rgba(234, 243, 238, 0.04) 0.6px, transparent 0.6px);
 }
 
 * {
@@ -67,7 +94,67 @@ body {
   background-size: 5px 5px;
   color: var(--color-ink);
   font-family: var(--font-body);
+  font-size: calc(16px * var(--text-scale));
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ===== Utility bar — theme + text-size toggles, shared across pages ===== */
+.util-bar {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  gap: var(--space-2);
+  z-index: 50;
+}
+
+.util-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--color-line);
+  background: var(--color-card);
+  color: var(--color-ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.util-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.util-btn:hover {
+  transform: translateY(-2px);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.util-btn.is-active {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
+}
+
+.util-btn--text {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .util-bar {
+    top: var(--space-3);
+    right: var(--space-3);
+  }
+  .util-btn {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 button,
