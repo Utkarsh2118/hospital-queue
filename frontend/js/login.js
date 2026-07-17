@@ -16,12 +16,10 @@ togglePasswordBtn.addEventListener('click', () => {
   togglePasswordBtn.setAttribute('aria-pressed', String(isHidden));
 });
 
-// If already signed in, go directly to home landing page.
-(function redirectIfLoggedIn() {
-  const user = auth.getUser();
-  if (user) {
-    window.location.href = 'index.html';
-  }
+// Always show a fresh staff sign-in screen.
+// Clear any existing session so clicking Staff sign in never loops back to landing.
+(function resetSessionForLogin() {
+  auth.logout();
 })();
 
 loginForm.addEventListener('submit', async (e) => {
