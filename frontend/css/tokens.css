@@ -1,33 +1,88 @@
 :root {
-  /* Color — "queue ticket" palette: paper-mint, deep teal ink, jade primary, brick-red for urgency */
-  --color-bg: #f2f5f1;
-  --color-bg-alt: #e6ede6;
-  --color-card: #fffdf7;
-  --color-paper: #fbf8ef;
-  --color-ink: #1f3a3d;
-  --color-ink-soft: #52696b;
-  --color-ink-faint: #8a9c9d;
-  --color-primary: #2d6e6e;
-  --color-primary-dark: #1f4f4f;
-  --color-primary-tint: #e2eeec;
-  --color-emergency: #c4472b;
-  --color-emergency-tint: #f9e6e0;
-  --color-success: #4c8c6b;
-  --color-success-tint: #e5f0e8;
-  --color-line: #d8ded9;
-  --color-line-strong: #b9c4bf;
+  /* ============================================================
+     MediQueue Design System — v2 ("Clinical Enterprise")
+     Replaces the v1 "paper ticket / stationery" system.
+     Legacy variable names are kept and repointed so every existing
+     page repaints immediately; new canonical names are added
+     alongside for components built in later phases.
+     ============================================================ */
 
-  /* Stamp — the ink-stamp accent used for the signature ticket badge, distinct from alert red */
-  --color-stamp: #a8462f;
-  --color-gold: #b8873c;
-  --color-gold-tint: #f3e9d3;
+  /* ---------- Core neutrals ---------- */
+  --color-bg: #f6f7f9;              /* page background */
+  --color-bg-alt: #eef1f4;          /* secondary/sunken background */
+  --color-card: #ffffff;            /* card / surface */
+  --color-paper: #ffffff;           /* legacy alias, same as card now */
+  --color-surface: #ffffff;
+  --color-surface-sunken: #eef1f4;
 
-  /* Type */
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
-  --font-body: 'Inter', -apple-system, sans-serif;
+  --color-ink: #101828;             /* primary text */
+  --color-ink-soft: #475467;        /* secondary text */
+  --color-ink-faint: #98a2b3;       /* tertiary / placeholder text */
+  --color-text: #101828;
+  --color-text-secondary: #475467;
+  --color-text-faint: #98a2b3;
 
-  /* Spacing scale */
+  --color-line: #e2e5ea;            /* hairline border */
+  --color-line-strong: #c6ccd6;     /* stronger border, dividers */
+  --color-border: #e2e5ea;
+  --color-border-strong: #c6ccd6;
+
+  /* ---------- Brand / primary ---------- */
+  --color-primary: #14508c;         /* deep clinical blue */
+  --color-primary-dark: #0d3a68;
+  --color-primary-hover: #0d3a68;
+  --color-primary-tint: #e8f0f9;
+
+  /* ---------- Accent (live / informational) ---------- */
+  --color-accent: #0c8599;          /* teal — used for "live" states only */
+  --color-accent-tint: #e3f4f6;
+
+  /* ---------- Semantic states ---------- */
+  --color-success: #12805c;
+  --color-success-tint: #e3f5ee;
+
+  --color-warning: #b25e09;
+  --color-warning-tint: #fcf1e1;
+
+  --color-danger: #c0342c;
+  --color-emergency: #c0342c;       /* legacy alias */
+  --color-danger-tint: #fbeae8;
+  --color-emergency-tint: #fbeae8;  /* legacy alias */
+
+  /* Retired decorative colors — kept defined (never undefined) so any
+     leftover rule referencing them fails safe instead of breaking,
+     but repointed to neutral so ink-stamp/gold flourishes go quiet
+     ahead of their page-by-page removal. */
+  --color-stamp: var(--color-danger);
+  --color-gold: var(--color-ink-faint);
+  --color-gold-tint: var(--color-bg-alt);
+
+  /* ---------- Type ---------- */
+  /* Single family system: Inter for everything, incl. numerics
+     (tabular-nums applied via .num utility / component rules).
+     --font-display and --font-mono kept as aliases so any
+     not-yet-migrated page still renders Inter instead of Fraunces/Plex. */
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.8125rem;  /* 13px */
+  --text-base: 0.875rem; /* 14px */
+  --text-md: 1rem;       /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.375rem;  /* 38px */
+  --text-5xl: 3rem;      /* 48px */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---------- Spacing (8px grid, 4px half-step) ---------- */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -37,45 +92,92 @@
   --space-7: 48px;
   --space-8: 64px;
 
-  /* Radius — deliberately small; this system is about paper/print, not soft app chrome */
-  --radius-sm: 4px;
-  --radius-md: 8px;
+  /* ---------- Radius ---------- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
 
-  /* Shadow — soft, paper-like lift, never glossy. "Stack" mimics a pile of ticket stock underneath. */
-  --shadow-card: 0 1px 2px rgba(31, 58, 61, 0.06), 0 4px 16px rgba(31, 58, 61, 0.08);
-  --shadow-lifted: 0 2px 4px rgba(31, 58, 61, 0.08), 0 12px 32px rgba(31, 58, 61, 0.12);
-  --shadow-stack: 0 1px 1px rgba(31, 58, 61, 0.05), 0 2px 0 var(--color-bg-alt), 0 3px 1px rgba(31, 58, 61, 0.05),
-    0 5px 0 var(--color-line), 0 6px 12px rgba(31, 58, 61, 0.14);
+  /* ---------- Elevation ----------
+     Functional tiers only — each used for one purpose.
+     xs = inline controls, sm = resting cards, md = raised/hover,
+     lg = overlays (modals, popovers). No decorative stacking. */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 4px 12px rgba(16, 24, 40, 0.10), 0 2px 4px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 12px 32px rgba(16, 24, 40, 0.16), 0 4px 8px rgba(16, 24, 40, 0.06);
 
-  /* Fine paper grain — layered under card backgrounds so nothing reads as flat vector fill */
-  --paper-grain: radial-gradient(rgba(31, 58, 61, 0.05) 0.6px, transparent 0.6px);
+  /* Legacy shadow aliases (kept so unmigrated pages don't lose elevation) */
+  --shadow-card: var(--shadow-sm);
+  --shadow-lifted: var(--shadow-md);
+  --shadow-stack: var(--shadow-sm);
 
-  /* Accessibility text scale — multiplied across the kiosk when large-text mode is on */
+  /* Retired paper texture — now a no-op, removed from body background below */
+  --paper-grain: none;
+
+  /* ---------- Motion ---------- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+
+  /* ---------- Accessibility text scale ---------- */
   --text-scale: 1;
 }
 
 /* ===== Dark theme ===== */
 [data-theme='dark'] {
-  --color-bg: #10201f;
-  --color-bg-alt: #16302d;
-  --color-card: #17302e;
-  --color-paper: #17302e;
-  --color-ink: #eaf3ee;
-  --color-ink-soft: #a9c2bc;
-  --color-ink-faint: #74928c;
-  --color-primary: #4fb3a5;
-  --color-primary-dark: #7fd6c8;
-  --color-primary-tint: #1d3d38;
-  --color-emergency: #ff8a68;
-  --color-emergency-tint: #3a231c;
-  --color-success: #7fce9f;
-  --color-success-tint: #1c3628;
-  --color-line: #274642;
-  --color-line-strong: #3a5c56;
-  --color-stamp: #ff9c7a;
-  --color-gold: #e0b565;
-  --color-gold-tint: #3a3120;
-  --paper-grain: radial-gradient(rgba(234, 243, 238, 0.04) 0.6px, transparent 0.6px);
+  --color-bg: #0b1220;
+  --color-bg-alt: #121b2e;
+  --color-card: #141d30;
+  --color-paper: #141d30;
+  --color-surface: #141d30;
+  --color-surface-sunken: #121b2e;
+
+  --color-ink: #eef1f6;
+  --color-ink-soft: #aab4c4;
+  --color-ink-faint: #7c8798;
+  --color-text: #eef1f6;
+  --color-text-secondary: #aab4c4;
+  --color-text-faint: #7c8798;
+
+  --color-line: #24304a;
+  --color-line-strong: #374564;
+  --color-border: #24304a;
+  --color-border-strong: #374564;
+
+  --color-primary: #5b9bd9;
+  --color-primary-dark: #8bbde8;
+  --color-primary-hover: #8bbde8;
+  --color-primary-tint: #17253d;
+
+  --color-accent: #4dd0d9;
+  --color-accent-tint: #123238;
+
+  --color-success: #5fcba0;
+  --color-success-tint: #123626;
+
+  --color-warning: #e8a94a;
+  --color-warning-tint: #392a12;
+
+  --color-danger: #ff8a80;
+  --color-emergency: #ff8a80;
+  --color-danger-tint: #3a1a17;
+  --color-emergency-tint: #3a1a17;
+
+  --color-stamp: var(--color-danger);
+  --color-gold: var(--color-ink-faint);
+  --color-gold-tint: var(--color-bg-alt);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55), 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card: var(--shadow-sm);
+  --shadow-lifted: var(--shadow-md);
+  --shadow-stack: var(--shadow-sm);
+
+  --paper-grain: none;
 }
 
 * {
@@ -90,13 +192,20 @@ body {
 body {
   margin: 0;
   background-color: var(--color-bg);
-  background-image: var(--paper-grain);
-  background-size: 5px 5px;
   color: var(--color-ink);
   font-family: var(--font-body);
   font-size: calc(16px * var(--text-scale));
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard);
+}
+
+/* Tabular numerals for anything numeric/live — token numbers, counters,
+   dashboard KPIs. Apply this class instead of switching font family. */
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
 }
 
 /* ===== Utility bar — theme + text-size toggles, shared across pages ===== */
@@ -112,15 +221,17 @@ body {
 .util-btn {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--color-line);
-  background: var(--color-card);
-  color: var(--color-ink-soft);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-card);
-  transition: transform 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
 }
 
 .util-btn svg {
@@ -129,7 +240,7 @@ body {
 }
 
 .util-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   color: var(--color-primary);
   border-color: var(--color-primary);
 }
@@ -141,8 +252,8 @@ body {
 }
 
 .util-btn--text {
-  font-family: var(--font-mono);
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
   font-size: 13px;
 }
 
@@ -171,6 +282,7 @@ button {
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
+textarea:focus-visible,
 a:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
