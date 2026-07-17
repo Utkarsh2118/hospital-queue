@@ -8,6 +8,9 @@ const togglePasswordBtn = document.getElementById('togglePasswordBtn');
 const passwordToggleIconSlot = document.getElementById('passwordToggleIconSlot');
 passwordToggleIconSlot.innerHTML = iconSvg('eye');
 
+const loginParams = new URLSearchParams(window.location.search);
+const freshLogin = loginParams.get('fresh') === '1';
+
 togglePasswordBtn.addEventListener('click', () => {
   const isHidden = passwordInput.type === 'password';
   passwordInput.type = isHidden ? 'text' : 'password';
@@ -16,11 +19,10 @@ togglePasswordBtn.addEventListener('click', () => {
   togglePasswordBtn.setAttribute('aria-pressed', String(isHidden));
 });
 
-// Always show a fresh staff sign-in screen.
-// Clear any existing session so clicking Staff sign in never loops back to landing.
-(function resetSessionForLogin() {
+// Only clear an existing session when the user explicitly comes from the landing page.
+if (freshLogin) {
   auth.logout();
-})();
+}
 
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -33,8 +35,8 @@ loginForm.addEventListener('submit', async (e) => {
   submitBtn.textContent = 'Signing in…';
 
   try {
-    await auth.login(email, password);
-    window.location.href = 'index.html';
+    const user = await auth.login(email, password);
+    window.location.href = user.role === 'admin' ? 'admin.html' : 'dashboard.html';
   } catch (err) {
     errorBox.textContent = err.message || 'Login failed. Please try again.';
     errorBox.classList.remove('hidden');
