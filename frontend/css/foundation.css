@@ -322,6 +322,73 @@ textarea.input { height: auto; min-height: 96px; padding: var(--space-3) var(--s
 }
 .empty-state svg { width: 40px; height: 40px; color: var(--color-text-faint); }
 .empty-state__title { font-size: var(--text-lg); font-weight: var(--weight-semibold); color: var(--color-text); }
+.empty-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-surface-sunken);
+  color: var(--color-text-faint);
+}
+.empty-state__icon svg { width: 24px; height: 24px; }
+.empty-state__text { font-size: var(--text-base); color: var(--color-text-secondary); margin: 0; }
+
+/* ---------- Token card ----------
+   Replaces the v1 paper "ticket-stub" (perforation/notches/ink-stamp).
+   Shared component: adopted by the check-in kiosk now, and by the
+   tracking page in a later phase. No skeuomorphism — a plain card
+   using the same primitives as everything else in the system. */
+.token-card {
+  width: 100%;
+  max-width: 380px;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.token-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.token-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  text-align: center;
+  padding: var(--space-5) 0;
+  border-top: 1px dashed var(--color-border);
+  border-bottom: 1px dashed var(--color-border);
+}
+.token-card__label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-faint);
+}
+.token-card__number {
+  font-size: 3.5rem;
+  font-weight: var(--weight-bold);
+  line-height: 1.1;
+  color: var(--color-primary);
+}
+.token-card--emergency .token-card__number { color: var(--color-danger); }
+.token-card__name { font-size: var(--text-base); color: var(--color-text-secondary); }
+
+.token-card--in {
+  animation: token-card-in var(--duration-slow) var(--ease-standard);
+}
+@keyframes token-card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .token-card--in { animation: none; }
+}
 
 /* ---------- Skeleton loader ---------- */
 .skeleton {

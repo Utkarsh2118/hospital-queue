@@ -83,13 +83,17 @@
         </label>
 
         <div class="kiosk__priority">
-          <button type="button" id="priorityNormal" class="kiosk__priority-btn is-active">Regular visit</button>
+          <button type="button" id="priorityNormal" class="kiosk__priority-btn is-active">
+            <span class="kiosk__priority-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a4 4 0 0 0 8 0V3"/><circle cx="18" cy="16" r="3"/><path d="M14 9v3a4 4 0 0 1-8 0V9"/></svg></span>
+            Regular visit
+          </button>
           <button type="button" id="priorityEmergency" class="kiosk__priority-btn kiosk__priority-btn--emergency">
+            <span class="kiosk__priority-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.01"/></svg></span>
             This is an emergency
           </button>
         </div>
 
-        <button type="submit" id="submitBtn" class="kiosk__submit">Get my token</button>
+        <button type="submit" id="submitBtn" class="btn btn--primary btn--lg btn--full">Get my token</button>
       </form>
     </div>
 
@@ -99,7 +103,7 @@
       <div id="ticketContainer"></div>
       <div id="trackLinkContainer"></div>
       <div id="liveStatus" class="kiosk__live-status hidden"></div>
-      <button id="newCheckinBtn" class="kiosk__submit kiosk__submit--secondary">Done — new check-in</button>
+      <button id="newCheckinBtn" class="btn btn--secondary btn--lg">Done — new check-in</button>
     </div>
   </div>
 

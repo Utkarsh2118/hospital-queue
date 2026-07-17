@@ -266,24 +266,19 @@ checkinForm.addEventListener('submit', async (e) => {
   }
 });
 
-// ===== Ticket rendering (the signature torn-ticket-stub visual) =====
+// ===== Token confirmation card =====
 function renderTicket() {
   const isEmergency = issuedToken.priority === 'emergency';
   ticketContainer.innerHTML = `
-    <div class="ticket-stub ticket-stub--lg ticket-print-in ${isEmergency ? 'ticket-stub--emergency' : ''}">
-      <div class="ticket-stub__top">
-        <span class="ticket-stub__label">Department</span>
-        <span class="ticket-stub__dept">${selectedDept.name}</span>
-        ${isEmergency ? '<span class="ticket-stub__flag">Priority</span>' : ''}
+    <div class="card token-card token-card--in ${isEmergency ? 'token-card--emergency' : ''}">
+      <div class="token-card__header">
+        <span class="badge badge--primary">${selectedDept.name}</span>
+        ${isEmergency ? '<span class="badge badge--danger">Emergency</span>' : ''}
       </div>
-      <div class="ticket-stub__perforation" aria-hidden="true">
-        <span class="ticket-stub__notch ticket-stub__notch--left"></span>
-        <span class="ticket-stub__notch ticket-stub__notch--right"></span>
-      </div>
-      <div class="ticket-stub__bottom">
-        <span class="ticket-stub__label">Your token</span>
-        <span class="ticket-stub__number">${issuedToken.tokenNumber}</span>
-        <span class="ticket-stub__name">${issuedToken.patientName}</span>
+      <div class="token-card__body">
+        <span class="token-card__label">Your token</span>
+        <span class="token-card__number num">${issuedToken.tokenNumber}</span>
+        <span class="token-card__name">${issuedToken.patientName}</span>
       </div>
       <div class="ticket-qr" id="ticketQr"></div>
     </div>
@@ -358,8 +353,8 @@ function renderLiveStatus(status, position) {
     const etaText = ahead > 0 ? ` · <span class="kiosk__eta">~${etaMinutes} min</span>` : '';
     liveStatus.innerHTML =
       position === 1
-        ? `<span class="kiosk__live-dot"></span> You're next in line${etaText}`
-        : `<span class="kiosk__live-dot"></span> ${ahead} ${ahead === 1 ? 'patient' : 'patients'} ahead of you${etaText}`;
+        ? `<span class="live-dot"></span> You're next in line${etaText}`
+        : `<span class="live-dot"></span> ${ahead} ${ahead === 1 ? 'patient' : 'patients'} ahead of you${etaText}`;
   } else if (status === 'in-progress') {
     liveStatus.innerHTML = 'Your turn — please proceed to the room now.';
   } else if (status === 'completed') {
