@@ -135,12 +135,15 @@ setInterval(fetchAll, 15000); // safety-net poll every 15s
 setInterval(updateClock, 1000);
 
 // ===== Real-time updates =====
-getSocket().on('queue:updated', () => fetchAll());
-getSocket().on('queue:now-serving', ({ token }) => {
-  flashDeptId = token.department;
-  renderBoards();
-  playChime();
-  setTimeout(() => {
-    flashDeptId = null;
-  }, 3000);
-});
+const socket = getSocket();
+if (socket) {
+  socket.on('queue:updated', () => fetchAll());
+  socket.on('queue:now-serving', ({ token }) => {
+    flashDeptId = token.department;
+    renderBoards();
+    playChime();
+    setTimeout(() => {
+      flashDeptId = null;
+    }, 3000);
+  });
+}

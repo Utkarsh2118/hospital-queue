@@ -6,6 +6,9 @@
 let _socket = null;
 
 function getSocket() {
+  if (typeof io !== 'function') {
+    return null;
+  }
   if (!_socket) {
     _socket = io(CONFIG.SOCKET_URL, { autoConnect: true });
   }
@@ -14,10 +17,12 @@ function getSocket() {
 
 function joinDepartment(departmentId) {
   if (!departmentId) return;
-  getSocket().emit('join-department', departmentId);
+  const socket = getSocket();
+  if (socket) socket.emit('join-department', departmentId);
 }
 
 function leaveDepartment(departmentId) {
   if (!departmentId) return;
-  getSocket().emit('leave-department', departmentId);
+  const socket = getSocket();
+  if (socket) socket.emit('leave-department', departmentId);
 }
