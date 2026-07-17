@@ -16,11 +16,11 @@ togglePasswordBtn.addEventListener('click', () => {
   togglePasswordBtn.setAttribute('aria-pressed', String(isHidden));
 });
 
-// If already signed in, go directly to landing page.
+// If already signed in, go directly to home landing page.
 (function redirectIfLoggedIn() {
   const user = auth.getUser();
   if (user) {
-    window.location.href = 'landing.html';
+    window.location.href = 'index.html';
   }
 })();
 
@@ -36,7 +36,7 @@ loginForm.addEventListener('submit', async (e) => {
 
   try {
     await auth.login(email, password);
-    window.location.href = 'landing.html';
+    window.location.href = 'index.html';
   } catch (err) {
     errorBox.textContent = err.message || 'Login failed. Please try again.';
     errorBox.classList.remove('hidden');

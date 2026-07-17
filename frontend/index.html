@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MediQueue — Patient Check-in</title>
+  <title>MediQueue — Hospital queue operations, in real time</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -12,110 +12,201 @@
   />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/foundation.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/kiosk.css" />
-  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
+  <link rel="stylesheet" href="css/landing.css" />
 </head>
 <body>
-  <div class="util-bar">
-    <button id="textSizeToggle" class="util-btn util-btn--text" type="button" title="Large text mode" aria-pressed="false">A+</button>
-    <button id="themeToggle" class="util-btn" type="button" title="Toggle dark mode" aria-pressed="false"></button>
-  </div>
 
-  <div class="kiosk">
-    <header class="kiosk__header">
-      <span class="kiosk__eyebrow">MediQueue</span>
-      <h1 class="kiosk__title">Patient check-in</h1>
-    </header>
-
-    <nav class="kiosk__stepper" id="kioskStepper" aria-label="Check-in progress">
-      <div class="kiosk__step is-active" data-step="1">
-        <span class="kiosk__step-dot">1</span>
-        <span class="kiosk__step-label">Department</span>
+  <header class="lnav">
+    <div class="lnav__inner">
+      <a class="lnav__brand" href="#top">
+        <span class="lnav__mark" aria-hidden="true">M</span>
+        MediQueue
+      </a>
+      <nav class="lnav__links" aria-label="Primary">
+        <a href="#product">Product</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#security">Security</a>
+      </nav>
+      <div class="lnav__actions">
+        <a class="btn btn--ghost btn--sm" href="login.html">Staff sign in</a>
+        <a class="btn btn--primary btn--sm" href="checkin.html">Start check-in</a>
       </div>
-      <span class="kiosk__step-line"><span></span></span>
-      <div class="kiosk__step" data-step="2">
-        <span class="kiosk__step-dot">2</span>
-        <span class="kiosk__step-label">Your details</span>
-      </div>
-      <span class="kiosk__step-line"><span></span></span>
-      <div class="kiosk__step" data-step="3">
-        <span class="kiosk__step-dot">3</span>
-        <span class="kiosk__step-label">Token</span>
-      </div>
-    </nav>
-
-    <div id="errorBox" class="kiosk__error hidden"></div>
-
-    <!-- Step 1: Select department -->
-    <div id="stepSelectDept" class="kiosk__panel fade-in">
-      <p class="kiosk__prompt">Which department would you like to visit today?</p>
-      <div id="deptGrid" class="kiosk__dept-grid"></div>
     </div>
+  </header>
 
-    <!-- Step 2: Patient details form -->
-    <div id="stepForm" class="kiosk__panel fade-in hidden">
-      <button id="backBtn" class="kiosk__back">← Change department</button>
-      <p class="kiosk__prompt">
-        Checking in to <strong id="selectedDeptName"></strong>
-      </p>
-      <form id="checkinForm" class="kiosk__form" novalidate>
-        <label class="kiosk__field">
-          <span>Full name *</span>
-          <input type="text" id="patientName" required placeholder="Enter your name" autocomplete="off" />
-          <span class="field-error-msg hidden" id="patientNameError"></span>
-        </label>
-        <div class="kiosk__field-row">
-          <label class="kiosk__field">
-            <span>Age</span>
-            <input type="number" id="patientAge" min="0" max="120" placeholder="Optional" />
-            <span class="field-error-msg hidden" id="patientAgeError"></span>
-          </label>
-          <label class="kiosk__field">
-            <span>Phone</span>
-            <input type="tel" id="patientPhone" placeholder="10-digit mobile (optional)" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" />
-            <span class="field-error-msg hidden" id="patientPhoneError"></span>
-          </label>
+  <main id="top">
+
+    <!-- ================= HERO ================= -->
+    <section class="hero">
+      <div class="hero__copy">
+        <span class="eyebrow">Hospital queue operations</span>
+        <h1 class="hero__title">The front desk,<br />running itself in real time.</h1>
+        <p class="hero__sub">
+          Patients check in, watch their token move, and get called — while doctors and
+          admins see the same live queue from their own dashboard. No paper lists,
+          no shouted names, no guessing how long the wait is.
+        </p>
+        <div class="hero__ctas">
+          <a class="btn btn--primary btn--lg" href="checkin.html">
+            Try patient check-in
+            <span class="hero__cta-icon" data-icon="arrowRight"></span>
+          </a>
+          <a class="btn btn--secondary btn--lg" href="login.html">Staff sign in</a>
         </div>
-        <label class="kiosk__field">
-          <span>Reason for visit</span>
-          <textarea id="symptoms" rows="2" placeholder="Briefly describe your symptoms (optional)"></textarea>
-        </label>
+      </div>
 
-        <div class="kiosk__priority">
-          <button type="button" id="priorityNormal" class="kiosk__priority-btn is-active">
-            <span class="kiosk__priority-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a4 4 0 0 0 8 0V3"/><circle cx="18" cy="16" r="3"/><path d="M14 9v3a4 4 0 0 1-8 0V9"/></svg></span>
-            Regular visit
-          </button>
-          <button type="button" id="priorityEmergency" class="kiosk__priority-btn kiosk__priority-btn--emergency">
-            <span class="kiosk__priority-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.01"/></svg></span>
-            This is an emergency
-          </button>
+      <div class="hero__preview" aria-hidden="true">
+        <div class="card preview-card">
+          <div class="card__header">
+            <span class="preview-card__label">Now serving</span>
+            <span class="live-label"><span class="live-dot"></span>Live</span>
+          </div>
+          <div class="card__body preview-card__body">
+            <div class="preview-card__row">
+              <span class="preview-card__token num">B&#8209;042</span>
+              <span class="badge badge--primary">Cardiology</span>
+            </div>
+            <div class="preview-card__meta">
+              <span>Position <strong class="num">3</strong> in queue</span>
+              <span>Est. wait <strong class="num">12</strong> min</span>
+            </div>
+            <div class="preview-card__row preview-card__row--alert">
+              <span class="badge badge--danger">Emergency</span>
+              <span class="preview-card__ghost">Token E&#8209;008 · called next</span>
+            </div>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <button type="submit" id="submitBtn" class="btn btn--primary btn--lg btn--full">Get my token</button>
-      </form>
+    <!-- ================= CAPABILITY STRIP ================= -->
+    <section class="stats" id="product">
+      <div class="stats__grid">
+        <div class="stats__item">
+          <span class="stats__value num">&lt;500ms</span>
+          <span class="stats__label">Live sync over Socket.IO</span>
+        </div>
+        <div class="stats__item">
+          <span class="stats__value num">2</span>
+          <span class="stats__label">Staff roles, one shared queue</span>
+        </div>
+        <div class="stats__item">
+          <span class="stats__value">Emergency-first</span>
+          <span class="stats__label">Priority routing, not first-come</span>
+        </div>
+        <div class="stats__item">
+          <span class="stats__value">Daily reset</span>
+          <span class="stats__label">Token counters clear every morning</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FEATURES ================= -->
+    <section class="features">
+      <div class="section-head">
+        <span class="eyebrow">Built for the front desk</span>
+        <h2>Everything the queue actually needs</h2>
+      </div>
+      <div class="features__grid">
+        <div class="feature-card">
+          <span class="feature-card__icon" data-icon="activity"></span>
+          <h3>Real-time updates</h3>
+          <p>Every check-in, call, and completion pushes instantly to patients, doctors, and the waiting-room display — no refreshing.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-card__icon" data-icon="alertTriangle"></span>
+          <h3>Emergency triage</h3>
+          <p>Emergency check-ins jump the queue automatically, so urgent cases are never stuck behind routine visits.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-card__icon" data-icon="smartphone"></span>
+          <h3>QR token tracking</h3>
+          <p>Every ticket includes a QR code linking straight to a live tracking page — patients can watch their status from their own phone.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-card__icon" data-icon="users"></span>
+          <h3>Role-based dashboards</h3>
+          <p>Doctors see their own department's queue. Admins see every department, every doctor, and every token in one place.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-card__icon" data-icon="building"></span>
+          <h3>Department-aware queueing</h3>
+          <p>Each department keeps its own independent queue and counter, so Cardiology running long never delays Pediatrics.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-card__icon" data-icon="key"></span>
+          <h3>Secure staff access</h3>
+          <p>Doctor and admin accounts are password-protected with hashed credentials and role-scoped access — patients never need an account.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section class="how" id="how-it-works">
+      <div class="section-head">
+        <span class="eyebrow">How it works</span>
+        <h2>Three steps, start to finish</h2>
+      </div>
+      <ol class="how__steps">
+        <li class="how__step">
+          <span class="how__num">1</span>
+          <h3>Check in at the kiosk</h3>
+          <p>Pick a department, add basic details, and flag it as an emergency if needed. A token prints instantly.</p>
+        </li>
+        <li class="how__step">
+          <span class="how__num">2</span>
+          <h3>Watch it move, live</h3>
+          <p>Scan the QR code or open the tracking page to see queue position and estimated wait update in real time.</p>
+        </li>
+        <li class="how__step">
+          <span class="how__num">3</span>
+          <h3>Get called by the doctor</h3>
+          <p>When it's time, the token is called on the waiting-room display and the doctor's dashboard — no names shouted across the room.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ================= SECURITY ================= -->
+    <section class="security" id="security">
+      <div class="security__copy">
+        <span class="eyebrow">Security &amp; access</span>
+        <h2>Staff access is locked down. Patients never need an account.</h2>
+        <p>
+          Patients check in without creating an account or storing a password, which keeps
+          the system's attack surface small. Every doctor and admin account is protected
+          the same way:
+        </p>
+        <ul class="security__list">
+          <li><span class="security__check" data-icon="checkCircle"></span>Passwords are hashed, never stored in plain text</li>
+          <li><span class="security__check" data-icon="checkCircle"></span>Sessions are verified on every request, not just at login</li>
+          <li><span class="security__check" data-icon="checkCircle"></span>Doctors can only see and act on their own department's queue</li>
+          <li><span class="security__check" data-icon="checkCircle"></span>Admins can deactivate a staff account instantly if access needs to be revoked</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="lfooter">
+    <div class="lfooter__inner">
+      <div class="lfooter__brand">
+        <span class="lnav__mark" aria-hidden="true">M</span>
+        MediQueue
+      </div>
+      <div class="lfooter__links">
+        <a href="checkin.html">Patient check-in</a>
+        <a href="track.html">Track a token</a>
+        <a href="login.html">Staff sign in</a>
+      </div>
+      <span class="lfooter__note">Hospital queue management, built for real front desks.</span>
     </div>
-
-    <!-- Step 3: Ticket issued -->
-    <div id="stepTicket" class="kiosk__panel kiosk__panel--center fade-in hidden">
-      <p class="kiosk__prompt">You're checked in. Please take a seat and watch the display screen.</p>
-      <div id="ticketContainer"></div>
-      <div id="trackLinkContainer"></div>
-      <div id="liveStatus" class="kiosk__live-status hidden"></div>
-      <button id="newCheckinBtn" class="btn btn--secondary btn--lg">Done — new check-in</button>
-    </div>
-  </div>
-
-  <footer class="kiosk__footer">
-    <a href="login.html">Staff login</a>
   </footer>
 
-  <script src="js/config.js"></script>
-  <script src="js/theme.js"></script>
-  <script src="js/api.js"></script>
   <script src="js/icons.js"></script>
-  <script src="js/toast.js"></script>
-  <script src="js/kiosk.js"></script>
+  <script>
+    document.querySelectorAll('[data-icon]').forEach((el) => {
+      el.innerHTML = iconSvg(el.getAttribute('data-icon'));
+    });
+  </script>
 </body>
 </html>
