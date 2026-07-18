@@ -6,7 +6,12 @@
 const api = {
   async _request(method, path, body) {
     const headers = { 'Content-Type': 'application/json' };
-    const token = auth.getToken();
+    // auth.js isn't loaded on public pages (kiosk, track, display) — fall
+    // back to reading storage directly so this never throws there.
+    const token =
+      typeof auth !== 'undefined'
+        ? auth.getToken()
+        : localStorage.getItem('mq_token') || sessionStorage.getItem('mq_token');
     if (token) headers.Authorization = `Bearer ${token}`;
 
     const res = await fetch(`${CONFIG.API_URL}${path}`, {
@@ -24,7 +29,14 @@ const api = {
 
     if (!res.ok) {
       if (res.status === 401) {
-        auth.logout();
+        if (typeof auth !== 'undefined') {
+          auth.logout();
+        } else {
+          localStorage.removeItem('mq_token');
+          localStorage.removeItem('mq_user');
+          sessionStorage.removeItem('mq_token');
+          sessionStorage.removeItem('mq_user');
+        }
       }
       const message = (data && data.message) || `Request failed (${res.status})`;
       throw new Error(message);
