@@ -340,7 +340,7 @@ if (user) {
       renderBarChart(
         chartServed,
         perDept.map((d) => ({ label: d.dept.name, value: d.stats.servedToday || 0 })),
-        { color: 'var(--color-primary)' }
+        { color: 'var(--color-success)' }
       );
 
       // --- Avg wait by department chart ---
@@ -349,7 +349,7 @@ if (user) {
         perDept
           .filter((d) => d.stats.avgWaitMinutes !== null)
           .map((d) => ({ label: d.dept.name, value: d.stats.avgWaitMinutes })),
-        { suffix: ' min', color: 'var(--color-gold)' }
+        { suffix: ' min', color: 'var(--color-warning)' }
       );
 
       // --- Busiest hours chart (bucket every check-in today by hour) ---
@@ -363,7 +363,7 @@ if (user) {
       const activeHours = hourCounts
         .map((count, h) => ({ label: formatHour(h), value: count, hour: h }))
         .filter((h) => h.value > 0);
-      renderBarChart(chartHours, activeHours, { color: 'var(--color-stamp)' });
+      renderBarChart(chartHours, activeHours, { color: 'var(--color-accent)' });
 
       // --- Summary stats ---
       const totalServed = perDept.reduce((sum, d) => sum + (d.stats.servedToday || 0), 0);
