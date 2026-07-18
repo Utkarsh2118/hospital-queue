@@ -23,8 +23,12 @@
   </div>
 
   <div class="kiosk kiosk--track">
+   <div class="kiosk__shell">
     <header class="kiosk__header">
-      <span class="kiosk__eyebrow">MediQueue</span>
+      <div class="kiosk__brand">
+        <span class="kiosk__mark" aria-hidden="true">M</span>
+        <span class="kiosk__eyebrow">MediQueue</span>
+      </div>
       <h1 class="kiosk__title">Track my token</h1>
     </header>
 
@@ -49,6 +53,7 @@
       <div id="liveStatus" class="kiosk__live-status hidden"></div>
       <button id="lookupAnotherBtn" class="btn btn--secondary btn--lg">Track a different token</button>
     </div>
+   </div>
   </div>
 
   <script src="js/config.js"></script>
