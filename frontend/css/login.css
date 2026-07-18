@@ -6,12 +6,59 @@
    ============================================================ */
 
 .login {
+  position: relative;
   min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-5);
   background: var(--color-bg);
+}
+
+/* ===== Subtle ambient background =====
+   Deliberately understated compared to the landing page: two blobs,
+   opacity capped around 0.08, primary color only (no accent), slow
+   drift. Enough to feel considered on a sign-in screen; not enough to
+   distract from a password field. */
+.login-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.login-aurora__blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.08;
+  background: var(--color-primary);
+  will-change: transform;
+}
+.login-aurora__blob--a {
+  width: 480px;
+  height: 480px;
+  top: -160px;
+  left: -120px;
+  animation: login-aurora-drift-a 60s ease-in-out infinite;
+}
+.login-aurora__blob--b {
+  width: 420px;
+  height: 420px;
+  bottom: -160px;
+  right: -100px;
+  animation: login-aurora-drift-b 70s ease-in-out infinite;
+}
+@keyframes login-aurora-drift-a {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(36px, 26px); }
+}
+@keyframes login-aurora-drift-b {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-30px, -24px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .login-aurora__blob { animation: none; }
 }
 
 .login__card {
