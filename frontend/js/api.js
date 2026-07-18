@@ -6,7 +6,7 @@
 const api = {
   async _request(method, path, body) {
     const headers = { 'Content-Type': 'application/json' };
-    const token = localStorage.getItem('mq_token');
+    const token = auth.getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
 
     const res = await fetch(`${CONFIG.API_URL}${path}`, {
@@ -24,8 +24,7 @@ const api = {
 
     if (!res.ok) {
       if (res.status === 401) {
-        localStorage.removeItem('mq_token');
-        localStorage.removeItem('mq_user');
+        auth.logout();
       }
       const message = (data && data.message) || `Request failed (${res.status})`;
       throw new Error(message);

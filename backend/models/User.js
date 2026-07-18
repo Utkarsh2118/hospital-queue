@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['admin', 'doctor'], required: true },
     department: { type: mongoose.Schema.Types.ObjectId, ref: 'Department', default: null }, // required if role = doctor
     isActive: { type: Boolean, default: true },
+    resetPasswordTokenHash: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null },
   },
   { timestamps: true }
 );

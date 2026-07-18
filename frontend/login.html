@@ -21,9 +21,15 @@
       <span class="login__mark" aria-hidden="true">M</span>
       <span class="login__eyebrow">MediQueue</span>
       <h1 class="login__title">Staff sign in</h1>
-      <p class="login__subtitle">For doctors and administrators. Patients don't need an account — use the check-in kiosk instead.</p>
+      <p class="login__subtitle">Patients don't need an account — use the check-in kiosk instead.</p>
+
+      <div class="login__roles" role="tablist" aria-label="Sign in as">
+        <button type="button" class="login__role-tab is-active" data-role="doctor" role="tab" aria-selected="true">Doctor</button>
+        <button type="button" class="login__role-tab" data-role="admin" role="tab" aria-selected="false">Admin</button>
+      </div>
 
       <div id="errorBox" class="login__error hidden"></div>
+      <div id="infoBox" class="login__info hidden"></div>
 
       <form id="loginForm" class="login__form">
         <label class="login__field">
@@ -39,6 +45,15 @@
             </button>
           </div>
         </label>
+
+        <div class="login__remember-row">
+          <label class="login__checkbox">
+            <input type="checkbox" id="rememberMe" checked />
+            <span>Remember me on this device</span>
+          </label>
+          <a href="forgot-password.html" class="login__forgot-link">Forgot password?</a>
+        </div>
+
         <button type="submit" id="submitBtn" class="btn btn--primary btn--lg btn--full">Sign in</button>
       </form>
 
