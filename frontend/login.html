@@ -18,28 +18,34 @@
 <body>
   <div class="login">
     <div class="login__card">
+      <span class="login__mark" aria-hidden="true">M</span>
       <span class="login__eyebrow">MediQueue</span>
       <h1 class="login__title">Staff sign in</h1>
-      <p class="login__subtitle">For doctors and administrators</p>
+      <p class="login__subtitle">For doctors and administrators. Patients don't need an account — use the check-in kiosk instead.</p>
 
       <div id="errorBox" class="login__error hidden"></div>
 
       <form id="loginForm" class="login__form">
         <label class="login__field">
           <span>Email</span>
-          <input type="email" id="email" required placeholder="you@hospital.test" />
+          <input class="input" type="email" id="email" required placeholder="you@hospital.test" autocomplete="username" />
         </label>
         <label class="login__field">
           <span>Password</span>
           <div class="password-field-wrap">
-            <input type="password" id="password" required placeholder="••••••••" />
+            <input class="input" type="password" id="password" required placeholder="••••••••" autocomplete="current-password" />
             <button type="button" id="togglePasswordBtn" class="password-toggle" aria-label="Show password" aria-pressed="false">
               <span id="passwordToggleIconSlot"></span>
             </button>
           </div>
         </label>
-        <button type="submit" id="submitBtn" class="login__submit">Sign in</button>
+        <button type="submit" id="submitBtn" class="btn btn--primary btn--lg btn--full">Sign in</button>
       </form>
+
+      <p class="login__footnote">
+        <span class="login__footnote-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+        Access is limited to registered hospital staff and is logged for security.
+      </p>
     </div>
   </div>
 
@@ -47,6 +53,6 @@
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/icons.js"></script>
-  <script src="js/login.js?v=20260718"></script>
+  <script src="js/login.js"></script>
 </body>
 </html>

@@ -336,33 +336,8 @@
   color: var(--color-ink-soft);
 }
 
-/* ===== Generic empty state (icon + message) ===== */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-6) var(--space-4);
-  color: var(--color-ink-faint);
-  text-align: center;
-}
-
-.empty-state__icon {
-  width: 48px;
-  height: 48px;
-  background: var(--color-bg-alt);
-  color: var(--color-ink-faint);
-}
-
-.empty-state__icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.empty-state__text {
-  font-size: 14px;
-  max-width: 260px;
-}
+/* Empty state (icon + message) now lives in foundation.css — removed
+   the older duplicate definition here to avoid a load-order conflict. */
 
 /* ===== Star rating (feedback page) ===== */
 .star-rating {

@@ -1,72 +1,75 @@
+/* ============================================================
+   MediQueue — Staff sign in (Phase 5 redesign)
+   Removed: paper-grain background on the card, the circular
+   "lanyard punch-hole" cutout, the 3D-offset button shadow.
+   All ids kept exactly as login.js expects — presentation only.
+   ============================================================ */
+
 .login {
   min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-5);
-  background: radial-gradient(circle at top, var(--color-bg-alt) 0%, var(--color-bg) 60%);
+  background: var(--color-bg);
 }
 
 .login__card {
-  position: relative;
   width: 100%;
   max-width: 380px;
-  background: var(--color-card);
-  background-image: var(--paper-grain);
-  background-size: 4px 4px;
-  border: 1px solid var(--color-line);
-  border-top: 4px solid var(--color-primary);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-stack);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   padding: var(--space-7) var(--space-6) var(--space-6);
-  margin-top: var(--space-4);
   display: flex;
   flex-direction: column;
 }
 
-/* Punch hole — reads as a staff lanyard badge, not a generic login card */
-.login__card::before {
-  content: '';
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 22px;
-  height: 22px;
-  background: var(--color-bg);
-  border: 1px solid var(--color-line);
-  border-radius: 50%;
-  box-shadow: inset 0 2px 3px rgba(31, 58, 61, 0.1);
+.login__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: var(--weight-bold);
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-4);
 }
 
 .login__eyebrow {
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-primary);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
 }
 
 .login__title {
-  font-family: var(--font-display);
-  font-size: 30px;
-  font-weight: 600;
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
   letter-spacing: -0.01em;
+  color: var(--color-text);
   margin: var(--space-2) 0 0;
 }
 
 .login__subtitle {
-  color: var(--color-ink-faint);
-  font-size: 14px;
-  margin: var(--space-1) 0 var(--space-6);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: var(--space-2) 0 var(--space-6);
 }
 
 .login__error {
-  background: var(--color-emergency-tint);
-  color: var(--color-emergency);
-  padding: var(--space-3);
+  background: var(--color-danger-tint);
+  color: var(--color-danger);
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
   margin-bottom: var(--space-4);
 }
 
@@ -80,45 +83,36 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
 }
 
-.login__field input {
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-sm);
-  padding: var(--space-3) var(--space-4);
-  font-size: 15px;
-  font-weight: 400;
-  color: var(--color-ink);
+/* Inputs use the shared .input class (added directly in the HTML);
+   only field-specific layout lives here. */
+.login__field input.input {
+  width: 100%;
 }
 
-.login__submit {
-  margin-top: var(--space-2);
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: var(--space-4);
-  font-size: 15px;
-  font-weight: 700;
-  box-shadow: 0 3px 0 var(--color-primary-dark), 0 6px 14px rgba(31, 58, 61, 0.18);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+.login__footnote {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: var(--space-5) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  line-height: 1.5;
 }
 
-.login__submit:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 0 var(--color-primary-dark), 0 10px 18px rgba(31, 58, 61, 0.2);
+.login__footnote-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  color: var(--color-text-faint);
 }
 
-.login__submit:active:not(:disabled) {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 var(--color-primary-dark), 0 3px 8px rgba(31, 58, 61, 0.16);
-}
-
-.login__submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  box-shadow: none;
+.login__footnote-icon svg {
+  width: 100%;
+  height: 100%;
 }
