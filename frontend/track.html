@@ -38,15 +38,16 @@
           <span>Token number</span>
           <input type="text" id="tokenNumberInput" required placeholder="GEN-004" autocomplete="off" autocapitalize="characters" />
         </label>
-        <button type="submit" id="lookupSubmitBtn" class="kiosk__submit">Check status</button>
+        <button type="submit" id="lookupSubmitBtn" class="btn btn--primary btn--lg btn--full">Check status</button>
       </form>
     </div>
 
     <!-- Live status panel -->
     <div id="statusPanel" class="kiosk__panel kiosk__panel--center fade-in hidden">
       <div id="ticketContainer"></div>
+      <div id="statusTimeline" class="track-timeline"></div>
       <div id="liveStatus" class="kiosk__live-status hidden"></div>
-      <button id="lookupAnotherBtn" class="kiosk__submit kiosk__submit--secondary">Track a different token</button>
+      <button id="lookupAnotherBtn" class="btn btn--secondary btn--lg">Track a different token</button>
     </div>
   </div>
 

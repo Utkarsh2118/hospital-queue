@@ -1,3 +1,9 @@
+/* ============================================================
+   MediQueue — Patient tracking page (Phase 4 redesign)
+   This page is checked repeatedly on a phone, often one-handed,
+   so everything is sized and spaced for mobile first.
+   ============================================================ */
+
 .kiosk--track {
   padding-top: var(--space-7);
 }
@@ -8,6 +14,110 @@
 
 .kiosk--track #tokenNumberInput {
   text-transform: uppercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* ===== Status timeline =====
+   Built entirely from the real `status` field already returned by
+   the API (waiting / in-progress / completed / skipped) — no new
+   backend data, just a clearer visual read of what already exists. */
+
+.track-timeline {
+  width: 100%;
+}
+
+.track-timeline__steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--space-2);
+}
+
+.track-timeline__step {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+/* Connecting line between dots */
+.track-timeline__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 55%;
+  width: 90%;
+  height: 2px;
+  background: var(--color-border);
+  z-index: 0;
+}
+
+.track-timeline__step.is-done:not(:last-child)::after {
+  background: var(--color-primary);
+}
+
+.track-timeline__dot {
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-strong);
+  transition: background var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard);
+}
+
+.track-timeline__step.is-done .track-timeline__dot {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.track-timeline__step.is-active .track-timeline__dot {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 4px var(--color-primary-tint);
+}
+
+.track-timeline__label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-faint);
+}
+
+.track-timeline__step.is-active .track-timeline__label {
+  color: var(--color-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.track-timeline__step.is-done .track-timeline__label {
+  color: var(--color-text-secondary);
+}
+
+.track-timeline__alert {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-warning-tint);
+  color: var(--color-warning);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-align: center;
+}
+
+@media (max-width: 420px) {
+  .kiosk--track {
+    padding-top: var(--space-6);
+  }
 }

@@ -30,28 +30,62 @@ function renderTicket(token) {
   const isEmergency = token.priority === 'emergency';
   const deptName = (token.department && token.department.name) || '';
   ticketContainer.innerHTML = `
-    <div class="ticket-stub ticket-stub--lg ticket-print-in ${isEmergency ? 'ticket-stub--emergency' : ''}">
-      <div class="ticket-stub__top">
-        <span class="ticket-stub__label">Department</span>
-        <span class="ticket-stub__dept">${deptName}</span>
-        ${isEmergency ? '<span class="ticket-stub__flag">Priority</span>' : ''}
+    <div class="card token-card token-card--in ${isEmergency ? 'token-card--emergency' : ''}">
+      <div class="token-card__header">
+        <span class="badge badge--primary">${deptName}</span>
+        ${isEmergency ? '<span class="badge badge--danger">Emergency</span>' : ''}
       </div>
-      <div class="ticket-stub__perforation" aria-hidden="true">
-        <span class="ticket-stub__notch ticket-stub__notch--left"></span>
-        <span class="ticket-stub__notch ticket-stub__notch--right"></span>
-      </div>
-      <div class="ticket-stub__bottom">
-        <span class="ticket-stub__label">Your token</span>
-        <span class="ticket-stub__number">${token.tokenNumber}</span>
-        <span class="ticket-stub__name">${token.patientName}</span>
+      <div class="token-card__body">
+        <span class="token-card__label">Your token</span>
+        <span class="token-card__number num">${token.tokenNumber}</span>
+        <span class="token-card__name">${token.patientName}</span>
       </div>
     </div>
+  `;
+}
+
+const TIMELINE_STEPS = [
+  { key: 'waiting', label: 'Waiting' },
+  { key: 'in-progress', label: 'With doctor' },
+  { key: 'completed', label: 'Completed' },
+];
+
+function renderTimeline(status) {
+  const timeline = document.getElementById('statusTimeline');
+  if (!timeline) return;
+
+  if (status === 'skipped') {
+    timeline.innerHTML = `
+      <div class="track-timeline__alert">
+        <span class="badge badge--warning">Skipped</span>
+        <span>Please see reception to be re-added to the queue.</span>
+      </div>
+    `;
+    return;
+  }
+
+  const currentIndex = TIMELINE_STEPS.findIndex((s) => s.key === status);
+  timeline.innerHTML = `
+    <ol class="track-timeline__steps">
+      ${TIMELINE_STEPS.map((step, i) => {
+        let stateClass = '';
+        if (i < currentIndex) stateClass = 'is-done';
+        else if (i === currentIndex) stateClass = 'is-active';
+        return `
+          <li class="track-timeline__step ${stateClass}">
+            <span class="track-timeline__dot"></span>
+            <span class="track-timeline__label">${step.label}</span>
+          </li>
+        `;
+      }).join('')}
+    </ol>
   `;
 }
 
 const AVG_MINUTES_PER_PATIENT = 6;
 
 function renderLiveStatus(status, position) {
+  renderTimeline(status);
   liveStatus.classList.remove('hidden');
   if (status === 'waiting' && position) {
     const ahead = position - 1;
@@ -59,17 +93,17 @@ function renderLiveStatus(status, position) {
     const etaText = ahead > 0 ? ` · <span class="kiosk__eta">~${etaMinutes} min</span>` : '';
     liveStatus.innerHTML =
       position === 1
-        ? `<span class="kiosk__live-dot"></span> You're next in line${etaText}`
-        : `<span class="kiosk__live-dot"></span> ${ahead} ${ahead === 1 ? 'patient' : 'patients'} ahead of you${etaText}`;
+        ? `<span class="live-dot"></span> You're next in line${etaText}`
+        : `<span class="live-dot"></span> ${ahead} ${ahead === 1 ? 'patient' : 'patients'} ahead of you${etaText}`;
   } else if (status === 'in-progress') {
-    liveStatus.innerHTML = 'Your turn — please proceed to the room now.';
+    liveStatus.innerHTML = '<span class="live-dot"></span> Your turn — please proceed to the room now.';
   } else if (status === 'completed') {
     const feedbackUrl = new URL('feedback.html', window.location.href);
     if (currentToken) feedbackUrl.searchParams.set('token', currentToken.tokenNumber);
     liveStatus.innerHTML = `Visit marked as completed. <a class="kiosk__feedback-link" href="${feedbackUrl.toString()}">Rate your visit →</a>`;
     stopStatusPolling();
   } else if (status === 'skipped') {
-    liveStatus.innerHTML = 'This token was skipped. Please see reception.';
+    liveStatus.classList.add('hidden');
     stopStatusPolling();
   }
 }
