@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
     rel="stylesheet"
   />
   <link rel="stylesheet" href="css/tokens.css" />
@@ -15,6 +15,15 @@
   <link rel="stylesheet" href="css/landing.css" />
 </head>
 <body>
+
+  <!-- Ambient background — landing page only, per motion guidelines.
+       Purely decorative, disabled automatically for prefers-reduced-motion
+       via the global rule in tokens.css. -->
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora__blob aurora__blob--a"></span>
+    <span class="aurora__blob aurora__blob--b"></span>
+    <span class="aurora__blob aurora__blob--c"></span>
+  </div>
 
   <header class="lnav">
     <div class="lnav__inner">
@@ -26,6 +35,7 @@
         <a href="#product">Product</a>
         <a href="#how-it-works">How it works</a>
         <a href="#security">Security</a>
+        <a href="#faq">FAQ</a>
       </nav>
       <div class="lnav__actions">
         <a class="btn btn--ghost btn--sm" href="login.html?fresh=1">Staff sign in</a>
@@ -38,7 +48,7 @@
 
     <!-- ================= HERO ================= -->
     <section class="hero">
-      <div class="hero__copy">
+      <div class="hero__copy" data-reveal>
         <span class="eyebrow">Hospital queue operations</span>
         <h1 class="hero__title">The front desk,<br />running itself in real time.</h1>
         <p class="hero__sub">
@@ -55,46 +65,132 @@
         </div>
       </div>
 
-      <div class="hero__preview" aria-hidden="true">
-        <div class="card preview-card">
-          <div class="card__header">
-            <span class="preview-card__label">Now serving</span>
-            <span class="live-label"><span class="live-dot"></span>Live</span>
+      <!-- ===== Dashboard mockup =====
+           A truthful miniature of the real doctor dashboard (dashboard.html):
+           same stat labels, same "Now serving" + "Call next" pattern, same
+           waiting list shape. Static markup, not a screenshot. -->
+      <div class="hero__preview" data-reveal>
+        <div class="mockup" role="img" aria-label="Preview of the doctor dashboard showing today's stats and the current queue">
+          <div class="mockup__chrome">
+            <span class="mockup__dot"></span>
+            <span class="mockup__dot"></span>
+            <span class="mockup__dot"></span>
+            <span class="mockup__chrome-title">Doctor dashboard</span>
           </div>
-          <div class="card__body preview-card__body">
-            <div class="preview-card__row">
-              <span class="preview-card__token num">B&#8209;042</span>
-              <span class="badge badge--primary">Cardiology</span>
+          <div class="mockup__body">
+            <div class="mockup__head">
+              <div>
+                <span class="mockup__eyebrow">Cardiology</span>
+                <span class="mockup__welcome">Welcome, Dr. Rao</span>
+              </div>
+              <span class="live-label"><span class="live-dot"></span>Live</span>
             </div>
-            <div class="preview-card__meta">
-              <span>Position <strong class="num">3</strong> in queue</span>
-              <span>Est. wait <strong class="num">12</strong> min</span>
+
+            <div class="mockup__stats">
+              <div class="mockup__stat">
+                <span class="mockup__stat-value num">18</span>
+                <span class="mockup__stat-label">Served today</span>
+              </div>
+              <div class="mockup__stat">
+                <span class="mockup__stat-value num">9m</span>
+                <span class="mockup__stat-label">Avg. wait</span>
+              </div>
+              <div class="mockup__stat">
+                <span class="mockup__stat-value num">1</span>
+                <span class="mockup__stat-label">Skipped</span>
+              </div>
             </div>
-            <div class="preview-card__row preview-card__row--alert">
-              <span class="badge badge--danger">Emergency</span>
-              <span class="preview-card__ghost">Token E&#8209;008 · called next</span>
+
+            <div class="mockup__now">
+              <div class="mockup__now-info">
+                <span class="mockup__now-label">Now serving</span>
+                <span class="mockup__now-token num">B&#8209;042</span>
+              </div>
+              <span class="btn btn--primary btn--sm mockup__now-btn" aria-hidden="true">Call next</span>
             </div>
+
+            <ul class="mockup__list">
+              <li>
+                <span class="mockup__list-token num">B&#8209;043</span>
+                <span class="mockup__list-meta">Waiting · 3rd in line</span>
+                <span class="badge badge--neutral">Regular</span>
+              </li>
+              <li>
+                <span class="mockup__list-token num">E&#8209;008</span>
+                <span class="mockup__list-meta">Waiting · called next</span>
+                <span class="badge badge--danger">Emergency</span>
+              </li>
+              <li>
+                <span class="mockup__list-token num">B&#8209;044</span>
+                <span class="mockup__list-meta">Waiting · 5th in line</span>
+                <span class="badge badge--neutral">Regular</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ================= CAPABILITY STRIP ================= -->
+    <!-- ================= LIVE QUEUE PREVIEW ================= -->
+    <section class="live-preview" aria-labelledby="live-preview-heading">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">See it move</span>
+        <h2 id="live-preview-heading">One board, every department, always current</h2>
+        <p class="section-head__sub">
+          This is the same waiting-room display your front desk would run — illustrated
+          here with sample data so you can see the pattern before you check in.
+        </p>
+      </div>
+      <div class="live-board" data-reveal>
+        <div class="live-board__grid" id="livePreviewGrid">
+          <div class="live-board__card">
+            <span class="live-board__dept">Cardiology</span>
+            <span class="live-board__token num">B&#8209;042</span>
+            <span class="live-board__next">Next: B&#8209;043</span>
+          </div>
+          <div class="live-board__card">
+            <span class="live-board__dept">General OPD</span>
+            <span class="live-board__token num">G&#8209;017</span>
+            <span class="live-board__next">Next: G&#8209;018</span>
+          </div>
+          <div class="live-board__card live-board__card--emergency">
+            <span class="live-board__dept">Emergency</span>
+            <span class="live-board__token num">E&#8209;008</span>
+            <span class="live-board__next">Called next</span>
+          </div>
+          <div class="live-board__card">
+            <span class="live-board__dept">Pediatrics</span>
+            <span class="live-board__token num">P&#8209;011</span>
+            <span class="live-board__next">Next: P&#8209;012</span>
+          </div>
+        </div>
+        <div class="live-board__footer">
+          <span class="live-label"><span class="live-dot"></span>Live</span>
+          <span class="live-board__caption">Sample preview · updates instantly over Socket.IO in the real board</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CAPABILITY / STATS STRIP ================= -->
     <section class="stats" id="product">
       <div class="stats__grid">
-        <div class="stats__item">
+        <div class="stats__item" data-reveal>
+          <span class="stats__icon" data-icon="activity"></span>
           <span class="stats__value num">&lt;500ms</span>
           <span class="stats__label">Live sync over Socket.IO</span>
         </div>
-        <div class="stats__item">
+        <div class="stats__item" data-reveal>
+          <span class="stats__icon" data-icon="users"></span>
           <span class="stats__value num">2</span>
           <span class="stats__label">Staff roles, one shared queue</span>
         </div>
-        <div class="stats__item">
+        <div class="stats__item" data-reveal>
+          <span class="stats__icon" data-icon="alertTriangle"></span>
           <span class="stats__value">Emergency-first</span>
           <span class="stats__label">Priority routing, not first-come</span>
         </div>
-        <div class="stats__item">
+        <div class="stats__item" data-reveal>
+          <span class="stats__icon" data-icon="clock"></span>
           <span class="stats__value">Daily reset</span>
           <span class="stats__label">Token counters clear every morning</span>
         </div>
@@ -103,37 +199,37 @@
 
     <!-- ================= FEATURES ================= -->
     <section class="features">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <span class="eyebrow">Built for the front desk</span>
         <h2>Everything the queue actually needs</h2>
       </div>
       <div class="features__grid">
-        <div class="feature-card">
+        <div class="feature-card" data-reveal>
           <span class="feature-card__icon" data-icon="activity"></span>
           <h3>Real-time updates</h3>
           <p>Every check-in, call, and completion pushes instantly to patients, doctors, and the waiting-room display — no refreshing.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" data-reveal>
           <span class="feature-card__icon" data-icon="alertTriangle"></span>
           <h3>Emergency triage</h3>
           <p>Emergency check-ins jump the queue automatically, so urgent cases are never stuck behind routine visits.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" data-reveal>
           <span class="feature-card__icon" data-icon="smartphone"></span>
           <h3>QR token tracking</h3>
           <p>Every ticket includes a QR code linking straight to a live tracking page — patients can watch their status from their own phone.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" data-reveal>
           <span class="feature-card__icon" data-icon="users"></span>
           <h3>Role-based dashboards</h3>
           <p>Doctors see their own department's queue. Admins see every department, every doctor, and every token in one place.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" data-reveal>
           <span class="feature-card__icon" data-icon="building"></span>
           <h3>Department-aware queueing</h3>
           <p>Each department keeps its own independent queue and counter, so Cardiology running long never delays Pediatrics.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" data-reveal>
           <span class="feature-card__icon" data-icon="key"></span>
           <h3>Secure staff access</h3>
           <p>Doctor and admin accounts are password-protected with hashed credentials and role-scoped access — patients never need an account.</p>
@@ -143,22 +239,22 @@
 
     <!-- ================= HOW IT WORKS ================= -->
     <section class="how" id="how-it-works">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <span class="eyebrow">How it works</span>
         <h2>Three steps, start to finish</h2>
       </div>
       <ol class="how__steps">
-        <li class="how__step">
+        <li class="how__step" data-reveal>
           <span class="how__num">1</span>
           <h3>Check in at the kiosk</h3>
           <p>Pick a department, add basic details, and flag it as an emergency if needed. A token prints instantly.</p>
         </li>
-        <li class="how__step">
+        <li class="how__step" data-reveal>
           <span class="how__num">2</span>
           <h3>Watch it move, live</h3>
           <p>Scan the QR code or open the tracking page to see queue position and estimated wait update in real time.</p>
         </li>
-        <li class="how__step">
+        <li class="how__step" data-reveal>
           <span class="how__num">3</span>
           <h3>Get called by the doctor</h3>
           <p>When it's time, the token is called on the waiting-room display and the doctor's dashboard — no names shouted across the room.</p>
@@ -166,22 +262,83 @@
       </ol>
     </section>
 
-    <!-- ================= SECURITY ================= -->
+    <!-- ================= SECURITY / TRUST ================= -->
     <section class="security" id="security">
-      <div class="security__copy">
+      <div class="section-head" data-reveal>
         <span class="eyebrow">Security &amp; access</span>
         <h2>Staff access is locked down. Patients never need an account.</h2>
-        <p>
+        <p class="section-head__sub">
           Patients check in without creating an account or storing a password, which keeps
           the system's attack surface small. Every doctor and admin account is protected
-          the same way:
+          the same way.
         </p>
-        <ul class="security__list">
-          <li><span class="security__check" data-icon="checkCircle"></span>Passwords are hashed, never stored in plain text</li>
-          <li><span class="security__check" data-icon="checkCircle"></span>Sessions are verified on every request, not just at login</li>
-          <li><span class="security__check" data-icon="checkCircle"></span>Doctors can only see and act on their own department's queue</li>
-          <li><span class="security__check" data-icon="checkCircle"></span>Admins can deactivate a staff account instantly if access needs to be revoked</li>
-        </ul>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-card" data-reveal>
+          <span class="trust-card__icon" data-icon="lock"></span>
+          <h3>Hashed credentials</h3>
+          <p>Passwords are hashed, never stored in plain text — for every doctor and admin account.</p>
+        </div>
+        <div class="trust-card" data-reveal>
+          <span class="trust-card__icon" data-icon="shield"></span>
+          <h3>Verified sessions</h3>
+          <p>Sessions are checked on every request, not just at login, so a stale token can't act on the queue.</p>
+        </div>
+        <div class="trust-card" data-reveal>
+          <span class="trust-card__icon" data-icon="building"></span>
+          <h3>Scoped by department</h3>
+          <p>Doctors can only see and act on their own department's queue — never another team's patients.</p>
+        </div>
+        <div class="trust-card" data-reveal>
+          <span class="trust-card__icon" data-icon="key"></span>
+          <h3>Revocable access</h3>
+          <p>Admins can deactivate a staff account instantly if access needs to be revoked.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section class="faq" id="faq">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Questions</span>
+        <h2>Before you check in</h2>
+      </div>
+      <div class="faq__list" data-reveal>
+        <details class="faq__item">
+          <summary>
+            Do patients need to create an account?
+            <span class="faq__chevron" data-icon="chevronDown"></span>
+          </summary>
+          <p>No. Patients check in with basic details at the kiosk and get a token — no account, no password, nothing to remember.</p>
+        </details>
+        <details class="faq__item">
+          <summary>
+            How does an emergency case skip the line?
+            <span class="faq__chevron" data-icon="chevronDown"></span>
+          </summary>
+          <p>Flagging a check-in as an emergency routes it to the front of that department's queue automatically, ahead of regular tokens.</p>
+        </details>
+        <details class="faq__item">
+          <summary>
+            Can one department's backlog slow down another?
+            <span class="faq__chevron" data-icon="chevronDown"></span>
+          </summary>
+          <p>No. Each department keeps its own independent queue and token counter, so Cardiology running long never delays Pediatrics.</p>
+        </details>
+        <details class="faq__item">
+          <summary>
+            How do patients know when it's their turn?
+            <span class="faq__chevron" data-icon="chevronDown"></span>
+          </summary>
+          <p>The waiting-room display and the patient's own tracking page (reached via the printed QR code) update in real time as tokens are called.</p>
+        </details>
+        <details class="faq__item">
+          <summary>
+            What can a doctor see versus an admin?
+            <span class="faq__chevron" data-icon="chevronDown"></span>
+          </summary>
+          <p>Doctors see and manage only their own department's queue. Admins see every department, every doctor, and every token, and can manage staff access.</p>
+        </details>
       </div>
     </section>
 
@@ -203,6 +360,7 @@
   </footer>
 
   <script src="js/icons.js"></script>
+  <script src="js/landing.js"></script>
   <script>
     document.querySelectorAll('[data-icon]').forEach((el) => {
       el.innerHTML = iconSvg(el.getAttribute('data-icon'));
