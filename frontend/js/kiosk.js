@@ -71,19 +71,25 @@ function renderSkeletons() {
     card.className = 'kiosk__dept-card';
     card.innerHTML = `
       <span class="skeleton-block skeleton-block--circle"></span>
-      <span class="skeleton-block skeleton-block--text"></span>
-      <span class="skeleton-block skeleton-block--text-sm"></span>
+      <span class="kiosk__dept-info">
+        <span class="skeleton-block skeleton-block--text"></span>
+        <span class="skeleton-block skeleton-block--text-sm"></span>
+      </span>
     `;
     deptGrid.appendChild(card);
   }
 }
 
-// ===== Render department cards =====
+// ===== Render department rows =====
+// Touch-friendly full-width rows: icon, name + room, waiting count
+// (right-aligned, bold), chevron. Waiting counts are filled in
+// separately by refreshWaitingCounts() once the queue data arrives,
+// so the rows render immediately without blocking on that fetch.
 function renderDepartments() {
   deptGrid.innerHTML = '';
   if (departments.length === 0) {
     deptGrid.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1;">
+      <div class="empty-state">
         <span class="icon-circle empty-state__icon">${iconSvg('inbox')}</span>
         <p class="empty-state__text">No departments are set up yet. Please ask reception for help.</p>
       </div>
@@ -92,16 +98,46 @@ function renderDepartments() {
   }
   departments.forEach((dept) => {
     const iconKey = getDepartmentIconKey(dept.name);
+    const colorKey = getDepartmentColorKey(dept.name);
     const card = document.createElement('button');
+    card.type = 'button';
     card.className = 'kiosk__dept-card';
+    card.dataset.color = colorKey;
+    card.dataset.deptId = dept._id;
     card.innerHTML = `
-      <span class="icon-circle kiosk__dept-icon">${iconSvg(iconKey)}</span>
-      <span class="kiosk__dept-name">${dept.name}</span>
-      ${dept.roomNumber ? `<span class="kiosk__dept-room">${dept.roomNumber}</span>` : ''}
+      <span class="icon-circle kiosk__dept-icon kiosk__dept-icon--${colorKey}">${iconSvg(iconKey)}</span>
+      <span class="kiosk__dept-info">
+        <span class="kiosk__dept-name">${dept.name}</span>
+        ${dept.roomNumber ? `<span class="kiosk__dept-room">${dept.roomNumber}</span>` : ''}
+      </span>
+      <span class="kiosk__dept-count">
+        <span class="kiosk__dept-count-num num" data-count-for="${dept._id}">&nbsp;</span>
+        <span class="kiosk__dept-count-label">waiting</span>
+      </span>
+      <span class="kiosk__dept-chevron">${iconSvg('chevronRight')}</span>
     `;
     card.addEventListener('click', () => selectDepartment(dept));
     deptGrid.appendChild(card);
   });
+  refreshWaitingCounts();
+}
+
+// Fetches each department's current waiting count in parallel and fills
+// it into the already-rendered rows. Failures are silent per-department
+// (falls back to a dash) so one department's outage doesn't block the rest.
+async function refreshWaitingCounts() {
+  await Promise.all(
+    departments.map(async (dept) => {
+      const countEl = deptGrid.querySelector(`[data-count-for="${dept._id}"]`);
+      if (!countEl) return;
+      try {
+        const data = await api.get(`/queue/${dept._id}`);
+        countEl.textContent = data.waitingCount ?? data.waiting?.length ?? 0;
+      } catch {
+        countEl.textContent = '–';
+      }
+    })
+  );
 }
 
 function selectDepartment(dept) {

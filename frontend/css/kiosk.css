@@ -219,56 +219,134 @@
 }
 .kiosk__back:hover { text-decoration: underline; }
 
-/* ===== Department grid ===== */
+/* ===== Department rows =====
+   Touch-friendly full-width rows: big tap target, icon left, name/room
+   stacked next to it, waiting count right-aligned and bold, chevron
+   signals "tap to select." Built for kiosk touchscreens — easier to
+   scan top-to-bottom and easier to hit than a multi-column grid. */
 .kiosk__dept-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .kiosk__dept-card {
   position: relative;
+  width: 100%;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: var(--space-6) var(--space-5);
+  padding: var(--space-4) var(--space-5);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-4);
   box-shadow: var(--shadow-sm);
+  text-align: left;
+  min-height: 76px;
   transition: box-shadow var(--duration-fast) var(--ease-standard),
     border-color var(--duration-fast) var(--ease-standard),
-    transform var(--duration-fast) var(--ease-standard);
+    background var(--duration-fast) var(--ease-standard);
 }
 
 .kiosk__dept-card:hover {
   border-color: var(--color-primary);
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
 }
 
 .kiosk__dept-card:active {
-  transform: translateY(0);
+  background: var(--color-surface-sunken);
+  box-shadow: var(--shadow-xs);
 }
 
 .kiosk__dept-icon {
+  flex-shrink: 0;
   width: 48px;
   height: 48px;
   background: var(--color-primary-tint);
   color: var(--color-primary);
 }
 
+.kiosk__dept-icon--danger {
+  background: var(--color-danger-tint);
+  color: var(--color-danger);
+}
+
+.kiosk__dept-icon--success {
+  background: var(--color-success-tint);
+  color: var(--color-success);
+}
+
+.kiosk__dept-icon--warning {
+  background: var(--color-warning-tint);
+  color: var(--color-warning);
+}
+
+.kiosk__dept-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .kiosk__dept-name {
   font-weight: var(--weight-semibold);
   color: var(--color-text);
   font-size: var(--text-md);
-  text-align: center;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .kiosk__dept-room {
   font-size: var(--text-sm);
   color: var(--color-text-faint);
+  text-align: left;
+}
+
+.kiosk__dept-count {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.15;
+}
+
+.kiosk__dept-count-num {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+}
+
+.kiosk__dept-card[data-color='danger'] .kiosk__dept-count-num {
+  color: var(--color-danger);
+}
+
+.kiosk__dept-card[data-color='success'] .kiosk__dept-count-num {
+  color: var(--color-success);
+}
+
+.kiosk__dept-card[data-color='warning'] .kiosk__dept-count-num {
+  color: var(--color-warning);
+}
+
+.kiosk__dept-count-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  text-transform: lowercase;
+}
+
+.kiosk__dept-chevron {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-faint);
+}
+
+.kiosk__dept-chevron svg {
+  width: 100%;
+  height: 100%;
 }
 
 /* ===== Form ===== */
@@ -480,12 +558,18 @@
   }
 
   .kiosk__dept-grid {
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .kiosk__dept-card {
-    padding: var(--space-4) var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-3);
+    min-height: 68px;
+  }
+
+  .kiosk__dept-icon {
+    width: 40px;
+    height: 40px;
   }
 
   .kiosk__form {
@@ -507,7 +591,11 @@
 }
 
 @media (max-width: 400px) {
-  .kiosk__dept-grid {
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  .kiosk__dept-name {
+    font-size: var(--text-base);
+  }
+
+  .kiosk__dept-count-num {
+    font-size: var(--text-lg);
   }
 }
