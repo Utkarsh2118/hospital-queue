@@ -26,49 +26,92 @@
   </div>
 
   <div class="login">
-    <div class="login__card">
-      <span class="login__mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 6h9M4 12h13M4 18h9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M17.5 8.5 21 12l-3.5 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
+    <div class="login__shell">
       <span class="login__eyebrow">MediQueue</span>
       <h1 class="login__title">Staff sign in</h1>
 
       <div class="login__roles" role="tablist" aria-label="Sign in as">
-        <button type="button" class="login__role-tab is-active" data-role="doctor" role="tab" aria-selected="true">Doctor</button>
-        <button type="button" class="login__role-tab" data-role="admin" role="tab" aria-selected="false">Admin</button>
+        <button type="button" class="login__role-tab is-active" data-role="doctor" role="tab" aria-selected="true" id="roleTabDoctor">
+          <span class="login__role-tab-icon" aria-hidden="true"></span>
+          Doctor
+        </button>
+        <button type="button" class="login__role-tab" data-role="admin" role="tab" aria-selected="false" id="roleTabAdmin">
+          <span class="login__role-tab-icon" aria-hidden="true"></span>
+          Admin
+        </button>
       </div>
 
       <div id="errorBox" class="login__error hidden"></div>
       <div id="infoBox" class="login__info hidden"></div>
 
-      <form id="loginForm" class="login__form">
-        <label class="login__field">
-          <span>Email</span>
-          <input class="input" type="email" id="email" required placeholder="you@hospital.test" autocomplete="username" />
-        </label>
-        <label class="login__field">
-          <span>Password</span>
-          <div class="password-field-wrap">
-            <input class="input" type="password" id="password" required placeholder="••••••••" autocomplete="current-password" />
-            <button type="button" id="togglePasswordBtn" class="password-toggle" aria-label="Show password" aria-pressed="false">
-              <span id="passwordToggleIconSlot"></span>
-            </button>
-          </div>
-        </label>
+      <!-- ===== 3D flip card ===== -->
+      <div class="login__flip">
+        <div class="login__flip-inner" id="loginFlipInner">
 
-        <div class="login__remember-row">
-          <label class="login__checkbox">
-            <input type="checkbox" id="rememberMe" checked />
-            <span>Remember me on this device</span>
-          </label>
-          <a href="forgot-password.html" class="login__forgot-link">Forgot password?</a>
+          <!-- ---------- FRONT: Doctor ---------- -->
+          <section class="login__face login__face--doctor" aria-hidden="false">
+            <span class="login__mark login__mark--doctor" aria-hidden="true"></span>
+
+            <form id="loginFormDoctor" class="login__form" data-role="doctor" autocomplete="on">
+              <label class="login__field">
+                <span>Email</span>
+                <input class="input" type="email" id="doctorEmail" required data-required-when-active placeholder="you@hospital.test" autocomplete="username" />
+              </label>
+              <label class="login__field">
+                <span>Password</span>
+                <div class="password-field-wrap">
+                  <input class="input" type="password" id="doctorPassword" required data-required-when-active placeholder="••••••••" autocomplete="current-password" />
+                  <button type="button" class="password-toggle" data-target="doctorPassword" aria-label="Show password" aria-pressed="false">
+                    <span class="password-toggle-icon-slot"></span>
+                  </button>
+                </div>
+              </label>
+
+              <div class="login__remember-row">
+                <label class="login__checkbox">
+                  <input type="checkbox" id="doctorRememberMe" checked />
+                  <span>Remember me on this device</span>
+                </label>
+                <a href="forgot-password.html" class="login__forgot-link">Forgot password?</a>
+              </div>
+
+              <button type="submit" class="btn btn--primary btn--lg btn--full login__submit login__submit--doctor">Sign in as Doctor</button>
+            </form>
+          </section>
+
+          <!-- ---------- BACK: Admin ---------- -->
+          <section class="login__face login__face--admin" aria-hidden="true">
+            <span class="login__mark login__mark--admin" aria-hidden="true"></span>
+
+            <form id="loginFormAdmin" class="login__form" data-role="admin" autocomplete="on">
+              <label class="login__field">
+                <span>Email</span>
+                <input class="input" type="email" id="adminEmail" data-required-when-active placeholder="you@hospital.test" autocomplete="username" tabindex="-1" />
+              </label>
+              <label class="login__field">
+                <span>Password</span>
+                <div class="password-field-wrap">
+                  <input class="input" type="password" id="adminPassword" data-required-when-active placeholder="••••••••" autocomplete="current-password" tabindex="-1" />
+                  <button type="button" class="password-toggle" data-target="adminPassword" aria-label="Show password" aria-pressed="false" tabindex="-1">
+                    <span class="password-toggle-icon-slot"></span>
+                  </button>
+                </div>
+              </label>
+
+              <div class="login__remember-row">
+                <label class="login__checkbox">
+                  <input type="checkbox" id="adminRememberMe" checked tabindex="-1" />
+                  <span>Remember me on this device</span>
+                </label>
+                <a href="forgot-password.html" class="login__forgot-link" tabindex="-1">Forgot password?</a>
+              </div>
+
+              <button type="submit" class="btn btn--primary btn--lg btn--full login__submit login__submit--admin" tabindex="-1">Sign in as Admin</button>
+            </form>
+          </section>
+
         </div>
-
-        <button type="submit" id="submitBtn" class="btn btn--primary btn--lg btn--full">Sign in</button>
-      </form>
+      </div>
 
       <p class="login__footnote">
         <span class="login__footnote-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>

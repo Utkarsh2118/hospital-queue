@@ -78,6 +78,8 @@
   .login-aurora::before { animation: none; }
 }
 
+/* Still used by forgot-password.html and reset-password.html, which
+   keep the plain single-card layout. */
 .login__card {
   width: 100%;
   max-width: 380px;
@@ -90,6 +92,19 @@
   flex-direction: column;
 }
 
+/* login.html's own wrapper — no card chrome here, since each flip
+   face (see .login__face) now carries its own border/shadow/padding. */
+.login__shell {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Mark (role icon badge) ----------
+   Lives inside each flip face now, not the shell, so it travels with
+   the card as it turns. Doctor = primary blue + cross, Admin = amber
+   + shield — color and icon both carry the role, not just the tabs. */
 .login__mark {
   display: inline-flex;
   align-items: center;
@@ -104,6 +119,8 @@
   margin-bottom: var(--space-4);
 }
 .login__mark svg { width: 20px; height: 20px; }
+.login__mark--doctor { background: var(--color-primary); }
+.login__mark--admin { background: var(--color-accent); }
 
 .login__eyebrow {
   font-size: var(--text-xs);
@@ -153,6 +170,10 @@
 
 .login__role-tab {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
   border: none;
   background: transparent;
   padding: var(--space-2) var(--space-3);
@@ -165,11 +186,20 @@
     box-shadow var(--duration-fast) var(--ease-standard);
 }
 
+.login__role-tab-icon {
+  display: inline-flex;
+  width: 15px;
+  height: 15px;
+}
+.login__role-tab-icon svg { width: 100%; height: 100%; }
+
 .login__role-tab.is-active {
   background: var(--color-surface);
-  color: var(--color-primary);
   box-shadow: var(--shadow-xs);
 }
+
+.login__role-tab[data-role="doctor"].is-active { color: var(--color-primary); }
+.login__role-tab[data-role="admin"].is-active { color: var(--color-warning); }
 
 /* ---------- Remember me + forgot password ---------- */
 .login__remember-row {
@@ -208,11 +238,65 @@
   text-decoration: underline;
 }
 
+/* ---------- 3D flip card ----------
+   .login__flip is the perspective viewport; .login__flip-inner is what
+   actually rotates 180° on role change. Both faces are stacked via
+   position:absolute so the flip pivots on one spot instead of the card
+   resizing mid-turn; JS sets an explicit height on the inner element
+   once faces are measured (see login.js). */
+.login__flip {
+  perspective: 1400px;
+  margin-bottom: var(--space-5);
+}
+
+.login__flip-inner {
+  position: relative;
+  width: 100%;
+  transition: transform 0.65s cubic-bezier(0.4, 0.15, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.login__flip-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.login__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+}
+
+.login__face--admin {
+  transform: rotateY(180deg);
+}
+
+/* While a face is turned away, kill interaction so tabbing/clicking
+   can't land on the hidden side mid-animation. */
+.login__face[aria-hidden="true"] {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login__flip-inner { transition: none; }
+}
+
 .login__form {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
+
+.login__submit--doctor { background: var(--color-primary); border-color: var(--color-primary); }
+.login__submit--doctor:hover { background: var(--color-primary-hover); }
+.login__submit--admin { background: var(--color-accent); border-color: var(--color-accent); }
+.login__submit--admin:hover { background: var(--color-warning); }
 
 .login__field {
   display: flex;
