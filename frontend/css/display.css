@@ -1,10 +1,10 @@
 .board {
-  --board-accent: #4dd0d9;
-  --board-danger: #ff6b6b;
+  --board-accent: #e8b65c;
+  --board-danger: #e2685f;
   min-height: 100%;
   background:
-    radial-gradient(circle at 15% 0%, rgba(45, 110, 110, 0.35) 0%, transparent 45%),
-    radial-gradient(circle at 85% 100%, rgba(184, 135, 60, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 15% 0%, rgba(44, 95, 138, 0.35) 0%, transparent 45%),
+    radial-gradient(circle at 85% 100%, rgba(217, 154, 43, 0.12) 0%, transparent 40%),
     var(--color-ink);
   color: white;
   padding: var(--space-7) var(--space-8);
