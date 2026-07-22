@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-5);
-  background: var(--color-bg);
+  background: transparent;
 }
 
 /* ===== Ambient background =====
