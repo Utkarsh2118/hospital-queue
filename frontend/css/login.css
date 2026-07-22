@@ -15,11 +15,12 @@
   background: var(--color-bg);
 }
 
-/* ===== Subtle ambient background =====
-   Deliberately understated compared to the landing page: two blobs,
-   opacity capped around 0.08, primary color only (no accent), slow
-   drift. Enough to feel considered on a sign-in screen; not enough to
-   distract from a password field. */
+/* ===== Ambient background =====
+   Two drifting color blobs (steel-blue + amber, tying back to the
+   Wayfinding palette) plus a faint animated dot-grid — a nod to
+   signage/map wayfinding rather than a generic SaaS blur. Still
+   restrained for a security-sensitive screen: opacity stays low,
+   nothing competes with the form. */
 .login-aurora {
   position: fixed;
   inset: 0;
@@ -27,38 +28,54 @@
   overflow: hidden;
   pointer-events: none;
 }
+.login-aurora::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background-image: radial-gradient(var(--color-border-strong) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.4;
+  animation: login-grid-drift 40s linear infinite;
+}
 .login-aurora__blob {
   position: absolute;
   border-radius: 50%;
   filter: blur(70px);
-  opacity: 0.08;
+  opacity: 0.16;
   background: var(--color-primary);
   will-change: transform;
 }
 .login-aurora__blob--a {
-  width: 480px;
-  height: 480px;
-  top: -160px;
-  left: -120px;
-  animation: login-aurora-drift-a 60s ease-in-out infinite;
+  width: 520px;
+  height: 520px;
+  top: -180px;
+  left: -140px;
+  animation: login-aurora-drift-a 26s ease-in-out infinite;
 }
 .login-aurora__blob--b {
-  width: 420px;
-  height: 420px;
-  bottom: -160px;
-  right: -100px;
-  animation: login-aurora-drift-b 70s ease-in-out infinite;
+  width: 460px;
+  height: 460px;
+  bottom: -170px;
+  right: -110px;
+  background: var(--color-accent);
+  opacity: 0.14;
+  animation: login-aurora-drift-b 32s ease-in-out infinite;
+}
+@keyframes login-grid-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 28px 28px; }
 }
 @keyframes login-aurora-drift-a {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(36px, 26px); }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, 44px) scale(1.08); }
 }
 @keyframes login-aurora-drift-b {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-30px, -24px); }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, -40px) scale(1.06); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .login-aurora__blob { animation: none; }
+  .login-aurora__blob,
+  .login-aurora::before { animation: none; }
 }
 
 .login__card {
@@ -86,6 +103,7 @@
   font-size: var(--text-lg);
   margin-bottom: var(--space-4);
 }
+.login__mark svg { width: 20px; height: 20px; }
 
 .login__eyebrow {
   font-size: var(--text-xs);
@@ -100,13 +118,6 @@
   font-weight: var(--weight-bold);
   letter-spacing: -0.01em;
   color: var(--color-text);
-  margin: var(--space-2) 0 0;
-}
-
-.login__subtitle {
-  color: var(--color-text-secondary);
-  font-size: var(--text-sm);
-  line-height: 1.5;
   margin: var(--space-2) 0 var(--space-6);
 }
 

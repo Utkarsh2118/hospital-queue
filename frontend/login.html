@@ -27,10 +27,14 @@
 
   <div class="login">
     <div class="login__card">
-      <span class="login__mark" aria-hidden="true">M</span>
+      <span class="login__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 6h9M4 12h13M4 18h9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M17.5 8.5 21 12l-3.5 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
       <span class="login__eyebrow">MediQueue</span>
       <h1 class="login__title">Staff sign in</h1>
-      <p class="login__subtitle">Patients don't need an account — use the check-in kiosk instead.</p>
 
       <div class="login__roles" role="tablist" aria-label="Sign in as">
         <button type="button" class="login__role-tab is-active" data-role="doctor" role="tab" aria-selected="true">Doctor</button>
