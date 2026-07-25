@@ -306,6 +306,36 @@ main { max-width: 1160px; margin: 0 auto; padding: 0 var(--space-5); position: r
 .mockup__list-token { font-weight: var(--weight-semibold); color: var(--color-text); min-width: 52px; }
 .mockup__list-meta { color: var(--color-text-secondary); flex: 1; }
 
+/* ---------- Mockup motion (added via landing.js, progressive) ----------
+   1) The whole panel idles with a slow float once it has revealed.
+   2) The "now serving" token flips digit-by-digit when it advances.
+   3) A stat value gets a small tick pulse when it increments.
+   All three are inert until landing.js opts them in, and all three
+   are fully disabled under reduced motion. */
+.mockup.is-floating { animation: mockup-float 6s ease-in-out infinite; }
+@keyframes mockup-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.mockup__now-token { display: inline-flex; }
+.mockup__now-token .flip-char {
+  display: inline-block;
+  transition: transform 0.28s var(--ease-standard), opacity 0.28s var(--ease-standard);
+  transform-origin: 50% 50%;
+}
+.mockup__now-token .flip-char.is-flipping { transform: rotateX(90deg); opacity: 0.35; }
+.mockup__stat-value.is-ticking { animation: stat-tick 0.4s var(--ease-standard); }
+@keyframes stat-tick {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.14); color: var(--color-primary); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mockup.is-floating { animation: none; }
+  .mockup__now-token .flip-char { transition: none; }
+  .mockup__stat-value.is-ticking { animation: none; }
+}
+
 /* ============================================================
    Live queue preview — mirrors display.html's board grid.
    Static sample data, honestly labelled as a sample preview.
@@ -327,6 +357,34 @@ main { max-width: 1160px; margin: 0 auto; padding: 0 var(--space-5); position: r
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-4);
+}
+/* Conveyor mode — landing.js wraps the cards in a .live-board__track
+   and duplicates them once for a seamless loop, then adds this class.
+   Falls back to the plain static grid above with no JS or reduced motion. */
+.live-board__grid.is-conveyor {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+}
+.live-board__track {
+  display: flex;
+  gap: var(--space-4);
+  width: max-content;
+  animation: live-board-scroll 26s linear infinite;
+}
+.live-board:hover .live-board__track,
+.live-board__track:focus-within { animation-play-state: paused; }
+@keyframes live-board-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-board__track { animation: none; }
+}
+.is-conveyor .live-board__card {
+  min-width: 200px;
+  flex: 0 0 auto;
 }
 .live-board__card {
   background: var(--color-surface-sunken);
