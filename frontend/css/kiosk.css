@@ -156,6 +156,18 @@
   color: #fff;
 }
 
+.kiosk__step-dot.is-activating {
+  animation: step-dot-pop 0.4s var(--ease-standard);
+}
+@keyframes step-dot-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kiosk__step-dot.is-activating { animation: none; }
+}
+
 .kiosk__step.is-active .kiosk__step-label {
   color: var(--color-primary);
 }
@@ -449,6 +461,18 @@
   box-shadow: 0 0 0 1.5px var(--color-danger) inset;
 }
 
+.kiosk__priority-btn.is-flashing {
+  animation: priority-flash 0.5s var(--ease-standard);
+}
+@keyframes priority-flash {
+  0% { box-shadow: 0 0 0 1.5px var(--color-danger) inset, 0 0 0 0 var(--color-danger-tint); }
+  50% { box-shadow: 0 0 0 1.5px var(--color-danger) inset, 0 0 0 6px var(--color-danger-tint); }
+  100% { box-shadow: 0 0 0 1.5px var(--color-danger) inset, 0 0 0 0 var(--color-danger-tint); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kiosk__priority-btn.is-flashing { animation: none; }
+}
+
 /* ===== Live status / ETA ===== */
 .kiosk__live-status {
   display: flex;
@@ -502,6 +526,45 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
+}
+
+.ticket-qr.is-in {
+  animation: ticket-qr-in 0.4s var(--ease-standard) 0.35s backwards;
+}
+@keyframes ticket-qr-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticket-qr.is-in { animation: none; }
+}
+
+.ticket-check {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-success-tint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-3);
+}
+.ticket-check svg { width: 22px; height: 22px; }
+.ticket-check path {
+  fill: none;
+  stroke: var(--color-success);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: ticket-check-draw 0.5s var(--ease-standard) 0.15s forwards;
+}
+@keyframes ticket-check-draw {
+  to { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticket-check path { animation: none; stroke-dashoffset: 0; }
 }
 
 .ticket-qr svg {

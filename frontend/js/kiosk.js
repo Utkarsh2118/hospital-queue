@@ -40,8 +40,16 @@ const stepperEls = kioskStepper ? [...kioskStepper.querySelectorAll('.kiosk__ste
 function updateStepper(stepNumber) {
   stepperEls.forEach((el) => {
     const n = Number(el.dataset.step);
+    const wasActive = el.classList.contains('is-active');
     el.classList.toggle('is-active', n === stepNumber);
     el.classList.toggle('is-done', n < stepNumber);
+    if (n === stepNumber && !wasActive) {
+      const dot = el.querySelector('.kiosk__step-dot');
+      dot.classList.remove('is-activating');
+      // Force a reflow so the animation restarts if it's already there.
+      void dot.offsetWidth;
+      dot.classList.add('is-activating');
+    }
   });
 }
 
@@ -157,6 +165,9 @@ priorityEmergencyBtn.addEventListener('click', () => {
   priority = 'emergency';
   priorityEmergencyBtn.classList.add('is-active');
   priorityNormalBtn.classList.remove('is-active');
+  priorityEmergencyBtn.classList.remove('is-flashing');
+  void priorityEmergencyBtn.offsetWidth;
+  priorityEmergencyBtn.classList.add('is-flashing');
 });
 
 // ===== Back button =====
@@ -306,6 +317,9 @@ checkinForm.addEventListener('submit', async (e) => {
 function renderTicket() {
   const isEmergency = issuedToken.priority === 'emergency';
   ticketContainer.innerHTML = `
+    <span class="ticket-check" aria-hidden="true">
+      <svg viewBox="0 0 28 28"><path d="M6 14l6 6 10-12"/></svg>
+    </span>
     <div class="card token-card token-card--in ${isEmergency ? 'token-card--emergency' : ''}">
       <div class="token-card__header">
         <span class="badge badge--primary">${selectedDept.name}</span>
@@ -316,7 +330,7 @@ function renderTicket() {
         <span class="token-card__number num">${issuedToken.tokenNumber}</span>
         <span class="token-card__name">${issuedToken.patientName}</span>
       </div>
-      <div class="ticket-qr" id="ticketQr"></div>
+      <div class="ticket-qr is-in" id="ticketQr"></div>
     </div>
   `;
   renderQrCode();
