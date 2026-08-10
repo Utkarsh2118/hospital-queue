@@ -25,7 +25,16 @@ const io = new Server(server, {
 
 app.set('io', io);
 
-app.use(cors());
+const allowedOrigins = [
+  process.env.CLIENT_URL,        // e.g. https://hospital-queue-sigma.vercel.app
+  'http://localhost:5173',       // local frontend dev
+].filter(Boolean);
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 app.use(express.json());
 
 // Home Route
