@@ -237,6 +237,15 @@ if (user) {
     setTimeout(() => newPasswordInput.focus(), 50);
   }
 
+  const changeMyPasswordBtn = document.getElementById('changeMyPasswordBtn');
+  changeMyPasswordBtn.addEventListener('click', () => {
+    resettingUserId = user._id || user.id;
+    resetPasswordMessage.textContent = 'Set a new password for your own admin account.';
+    newPasswordInput.value = '';
+    resetPasswordModalOverlay.classList.remove('hidden');
+    setTimeout(() => newPasswordInput.focus(), 50);
+  });
+
   resetPasswordCancelBtn.addEventListener('click', () => {
     resetPasswordModalOverlay.classList.add('hidden');
     resettingUserId = null;

@@ -14,10 +14,10 @@ const seed = async () => {
     await User.create({
       name: 'Admin',
       email: 'admin@hospital.test',
-      password: 'admin123', // change after first login
+      password: '@Ramji2118', // change after first login
       role: 'admin',
     });
-    console.log('Created default admin: admin@hospital.test / admin123');
+    console.log('Created default admin: admin@hospital.test / @Ramji2118');
   } else {
     console.log('Admin already exists, skipping.');
   }
