@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/User');
-const { sendPasswordResetEmail } = require('../utils/emailService');
+const { sendPasswordResetEmail, sendOtpEmail } = require('../utils/emailService');
+const { generateOtp, hashOtp } = require('../utils/otpService');
 
 const generateToken = (user) =>
   jwt.sign(
@@ -10,7 +11,24 @@ const generateToken = (user) =>
     { expiresIn: '12h' }
   );
 
+const publicUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  department: user.department,
+});
+
+const maskEmail = (email) => {
+  const [local, domain] = email.split('@');
+  const visible = local.slice(0, 2);
+  return `${visible}${'*'.repeat(Math.max(local.length - 2, 1))}@${domain}`;
+};
+
 // POST /api/auth/login
+// Step 1 of 2: verifies email + password, then emails a 6-digit code to
+// the account's own email address. Does NOT issue a token yet — the
+// client must call /verify-otp with the code to actually sign in.
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -28,17 +46,53 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = generateToken(user);
+    const { code, codeHash, expires } = generateOtp();
+    user.otpCodeHash = codeHash;
+    user.otpExpires = expires;
+    await user.save();
+
+    await sendOtpEmail(user.email, code);
+
     res.json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        department: user.department,
-      },
+      otpRequired: true,
+      userId: user._id,
+      maskedEmail: maskEmail(user.email),
     });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// POST /api/auth/verify-otp
+// Step 2 of 2: checks the emailed code. Only on success does this issue
+// the real JWT — this is the actual "login" from the client's point of view.
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { userId, code } = req.body;
+    if (!userId || !code) {
+      return res.status(400).json({ message: 'userId and code are required' });
+    }
+
+    const user = await User.findById(userId).populate('department', 'name code');
+    if (!user || !user.isActive || !user.otpCodeHash || !user.otpExpires) {
+      return res.status(401).json({ message: 'Invalid request' });
+    }
+
+    if (user.otpExpires < new Date()) {
+      return res.status(401).json({ message: 'Code expired. Please sign in again.' });
+    }
+
+    if (hashOtp(code) !== user.otpCodeHash) {
+      return res.status(401).json({ message: 'Incorrect code' });
+    }
+
+    // One-time use — clear it immediately so it can't be replayed.
+    user.otpCodeHash = null;
+    user.otpExpires = null;
+    await user.save();
+
+    const token = generateToken(user);
+    res.json({ token, user: publicUser(user) });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

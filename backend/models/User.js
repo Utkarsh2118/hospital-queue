@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true }, // hashed
+    otpCodeHash: { type: String, default: null },
+    otpExpires: { type: Date, default: null },
     role: { type: String, enum: ['admin', 'doctor'], required: true },
     department: { type: mongoose.Schema.Types.ObjectId, ref: 'Department', default: null }, // required if role = doctor
     isActive: { type: Boolean, default: true },

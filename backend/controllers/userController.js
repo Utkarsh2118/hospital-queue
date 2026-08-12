@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { isValidEmail } = require('../utils/validators');
 
 // POST /api/users  (admin only) - create doctor or admin account
 exports.createUser = async (req, res) => {
@@ -6,6 +7,9 @@ exports.createUser = async (req, res) => {
     const { name, email, password, role, department } = req.body;
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: 'name, email, password and role are required' });
+    }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: 'Enter a valid email address' });
     }
     if (role === 'doctor' && !department) {
       return res.status(400).json({ message: 'department is required for doctor accounts' });
@@ -48,20 +52,29 @@ exports.deactivateUser = async (req, res) => {
   }
 };
 
-// PUT /api/users/:id  (admin only) - currently just toggles isActive
-// (reactivating a previously-deactivated doctor account)
+// PUT /api/users/:id  (admin only) - toggles isActive, and/or updates email
 exports.updateUser = async (req, res) => {
   try {
-    const { isActive } = req.body;
+    const { isActive, email } = req.body;
     const update = {};
     if (typeof isActive === 'boolean') update.isActive = isActive;
 
-    const user = await User.findByIdAndUpdate(req.params.id, update, { new: true })
+    if (email !== undefined) {
+      if (!isValidEmail(email)) {
+        return res.status(400).json({ message: 'Enter a valid email address' });
+      }
+      update.email = email;
+    }
+
+    const user = await User.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true })
       .select('-password')
       .populate('department', 'name code');
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(409).json({ message: 'A user with this email already exists' });
+    }
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };

@@ -1,106 +1,162 @@
-# Hospital Queue Management System — Plain HTML/CSS/JS Edition
+# MediQueue — Hospital Queue Management System
 
-Same MediQueue app as the React version, but the frontend is now plain
-HTML, CSS, and vanilla JavaScript — **no build step, no npm bundler, no
-React**. The backend (Express + MongoDB + Socket.IO) is unchanged, since
-it was already plain JavaScript.
+A full-stack, real-time queue management system for hospital front desks —
+built as a Skill Development Project (CSE343). Patients check in and track
+their token from their phone; doctors and admins manage the queue live from
+role-based dashboards.
+
+**Live app:** https://hospital-queue-sigma.vercel.app
+**Backend API:** https://hospital-queue-eeko.onrender.com
+
+> Hosted on Render's free tier — the backend sleeps after inactivity, so the
+> first request after a while can take 20–50 seconds to wake up. Give it a
+> moment on first load.
+
+## Screenshots
+
+<!-- Add 2–4 screenshots or a short GIF here before sharing this repo —
+     landing page, check-in flow, and a dashboard/display view work best. -->
+
+## Features
+
+- **Real-time queue updates** over Socket.IO — check-ins, calls, and
+  completions push instantly to patients, doctors, and the waiting-room
+  display, no refreshing
+- **Emergency triage** — emergency check-ins jump the queue automatically
+- **QR token tracking** — every ticket includes a QR code linking to a live
+  tracking page
+- **Role-based dashboards** — doctors see only their department's queue;
+  admins see every department, doctor, and token
+- **Department-aware queueing** — each department keeps its own independent
+  queue and token counter
+- **Secure staff access** — hashed passwords, JWT sessions verified on every
+  request, admins can deactivate staff instantly; patients never need an
+  account
+- **Password recovery** — email-based reset flow that never reveals whether
+  an email is actually registered (no account enumeration)
+
+## Tech stack
+
+| Layer | Stack |
+|---|---|
+| Frontend | Plain HTML, CSS, vanilla JavaScript — no build step, no framework |
+| Backend | Node.js, Express |
+| Database | MongoDB Atlas (Mongoose) |
+| Real-time | Socket.IO |
+| Auth | JWT + bcrypt |
+| Email | Resend API (forgot-password links) |
+| Hosting | Vercel (frontend), Render (backend) |
+
+## Pages
+
+| File | Who it's for |
+|---|---|
+| `landing.html` | Marketing/landing page — product overview, how it works, security |
+| `checkin.html` | Patient kiosk — pick a department, check in, get a token + QR code |
+| `track.html` | Patient token tracking — live queue position and estimated wait |
+| `login.html` | Doctor / admin sign in |
+| `forgot-password.html`, `reset-password.html` | Staff password recovery |
+| `dashboard.html` | Doctor view — now serving, call next, waiting list, skip |
+| `admin.html` | Admin view — manage departments and doctor accounts |
+| `display.html` | Public waiting-room display screen |
+
+## How it's organized
+
+```
+frontend/
+  landing.html, checkin.html, track.html, login.html,
+  forgot-password.html, reset-password.html,
+  dashboard.html, admin.html, display.html
+  css/
+    tokens.css          Design tokens (color, type, spacing, radius, shadow)
+    foundation.css       Base/reset styles
+    components.css        Shared components (ticket stub, modals, skeletons)
+    landing.css, kiosk.css, login.css, track.css,
+    dashboard.css, admin.css, display.css   Page-specific styles
+  js/
+    config.js          API_URL / SOCKET_URL — edit if your backend runs elsewhere
+    api.js               Small fetch wrapper (attaches the JWT automatically)
+    auth.js                login() / logout() / requireRole() page guard
+    socket.js               Socket.IO connection + join/leave department room
+    icons.js                  Hand-drawn SVG icon set, no icon library
+    theme.js                   Light/dark theme toggle
+    toast.js                    Toast notifications
+    landing.js, kiosk.js, login.js, forgot-password.js,
+    reset-password.js, dashboard.js, admin.js, display.js,
+    track.js, feedback.js   Page-specific logic
+
+backend/
+  server.js            Express app + Socket.IO setup
+  config/db.js          MongoDB connection
+  models/                 Mongoose schemas (User, Department, Queue, Feedback)
+  controllers/             Route handlers (auth, queue, departments, users, feedback)
+  routes/                   Express routers
+  middleware/                Auth/role guards
+  utils/                      Email service, helpers
+  seed.js                Creates a sample admin + departments for local dev
+```
+
+Each frontend page loads only the scripts it needs, in order, via plain
+`<script src="...">` tags — no imports, no bundler, no transpilation.
+Real-time updates use the Socket.IO client from a CDN (`cdn.socket.io`).
+
+## Design system
+
+"Wayfinding" — hospital signage-inspired visual identity: steel-blue
+primary, muted amber for live/active states, muted red reserved for
+emergency and priority signaling. `Barlow Semi Condensed` for headings,
+`Inter` for body text, `JetBrains Mono` for token numbers — all loaded from
+Google Fonts. Full light/dark theme tokens live in `css/tokens.css`.
 
 ## Backend setup
 
 ```bash
 cd backend
 npm install
-cp .env.example .env      # set your MONGO_URI
+cp .env.example .env      # set your MONGO_URI and JWT_SECRET
 node seed.js               # creates admin@hospital.test / admin123 + 3 sample departments
 npm run dev                # runs on http://localhost:5000
 ```
 
 ## Frontend setup
 
-The frontend is just static files (`.html`, `.css`, `.js`) — you can open
-them with any static file server. Three easy options:
+The frontend is static files — serve them with any static file server.
 
 **Option A — VS Code Live Server extension (easiest)**
-Install the "Live Server" extension, right-click `frontend/index.html`,
+Install the "Live Server" extension, right-click `frontend/landing.html`,
 choose "Open with Live Server".
 
-**Option B — npm script (uses `http-server` under the hood)**
+**Option B — npm script (uses `http-server`)**
 ```bash
 cd frontend
 npm install
 npm start                  # runs on http://localhost:5173
 ```
 
-**Option C — Python (if you have Python installed)**
+**Option C — Python**
 ```bash
 cd frontend
 python -m http.server 5173
 ```
 
-Whichever you use, open **http://localhost:5173** in your browser.
-
 > Don't open the HTML files directly via `file://` — the browser blocks
-> some `fetch` requests from `file://` origins. Always serve via one of
-> the options above.
-
-## Pages
-
-| File | Who it's for |
-|---|---|
-| `index.html` | Patient kiosk — check in, select department, get a token |
-| `login.html` | Doctor / admin sign in |
-| `dashboard.html` | Doctor view — now serving, call next, waiting list, skip |
-| `admin.html` | Admin view — create departments and doctor accounts |
-| `display.html` | Public display screen — put this on the waiting-room TV |
-
-## How it's organized
-
-```
-frontend/
-  index.html, login.html, dashboard.html, admin.html, display.html
-  css/
-    tokens.css        Design tokens (colors, fonts, spacing) shared by all pages
-    components.css    Shared components: ticket stub, confirm modal, skeleton loaders
-    kiosk.css, login.css, dashboard.css, admin.css, display.css   Page-specific styles
-  js/
-    config.js          API_URL / SOCKET_URL — edit if your backend runs elsewhere
-    api.js              Small fetch wrapper (handles JWT header automatically)
-    auth.js              login() / logout() / requireRole() page guard
-    socket.js            Socket.IO connection + join/leave department room helpers
-    icons.js              Hand-drawn SVG icon set (no icon library dependency)
-    kiosk.js, login.js, dashboard.js, admin.js, display.js   Page-specific logic
-```
-
-Each page loads only the scripts it needs, in order, via plain
-`<script src="...">` tags at the bottom of the HTML — no imports, no
-bundler, no transpilation. Real-time updates use the Socket.IO client
-loaded from a CDN (`cdn.socket.io`).
-
-## Design system
-
-Same "queue ticket" visual identity as before: paper-mint background,
-deep teal ink, jade-teal primary, brick-red for emergencies, with the
-token itself rendered as a torn ticket stub (see `.ticket-stub` in
-`components.css`). Fonts: `Fraunces` for headings, `IBM Plex Mono` for
-token numbers, `Inter` for body text — loaded from Google Fonts.
+> some `fetch` requests from `file://` origins. Always serve via one of the
+> options above. If you use a server, edit `frontend/js/config.js` to point
+> at your local backend (`http://localhost:5000/api`) instead of the
+> deployed Render URL.
 
 ## Running everything together
 
 1. Start the backend (`npm run dev` in `backend/`).
 2. Serve the frontend (any option above).
-3. Visit `/index.html` (or just `/`) to check in a test patient.
-4. Visit `/login.html`, sign in as `admin@hospital.test` / `admin123`.
+3. Visit `landing.html`, then "Start check-in" to check in a test patient.
+4. Visit `login.html`, sign in as `admin@hospital.test` / `admin123`.
 5. In the admin panel, create a doctor account for a department.
-6. Sign out, sign back in as that doctor at `/login.html` → lands on
-   `/dashboard.html`.
-7. Open `/display.html` in another tab/window and watch it update live
-   as you call patients from the dashboard.
+6. Sign out, sign back in as that doctor → lands on `dashboard.html`.
+7. Open `display.html` in another tab and watch it update live as you call
+   patients from the dashboard.
 
-## Why not React?
+## Team
 
-This version trades some convenience (no automatic UI re-rendering, more
-manual DOM updates in `dashboard.js` and `display.js`) for zero build
-tooling — useful if you want to understand exactly what's happening in
-the browser without a compiler in between, or if your environment can't
-run a Node-based dev server for the frontend. The original React version
-is available separately if you'd rather work with components and JSX.
+Built by Utkarsh Srivastava, Venkatesh Koppula, and Navneet Singh, for the
+CSE343 Skill Development Project under Ms. Amarinder Kaur.

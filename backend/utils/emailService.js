@@ -53,4 +53,45 @@ async function sendPasswordResetEmail(toEmail, resetUrl) {
   }
 }
 
-module.exports = { sendPasswordResetEmail };
+async function sendOtpEmail(toEmail, code) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromAddress = process.env.RESEND_FROM_EMAIL || 'MediQueue <onboarding@resend.dev>';
+
+  if (!apiKey) {
+    console.log(`\n[DEV] No RESEND_API_KEY set — would have emailed this login code to ${toEmail}: ${code}\n`);
+    return { delivered: false, reason: 'no_api_key' };
+  }
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: fromAddress,
+        to: toEmail,
+        subject: `${code} is your MediQueue sign-in code`,
+        html: `
+          <p>Your MediQueue sign-in code is:</p>
+          <p style="font-size: 28px; font-weight: 700; letter-spacing: 4px;">${code}</p>
+          <p>This code expires in 10 minutes. If you didn't try to sign in, you can ignore this email.</p>
+        `,
+      }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      console.error(`[emailService] Resend API error (${res.status}): ${errText}`);
+      return { delivered: false, reason: 'provider_error' };
+    }
+
+    return { delivered: true };
+  } catch (err) {
+    console.error('[emailService] Failed to send OTP email:', err.message);
+    return { delivered: false, reason: 'network_error' };
+  }
+}
+
+module.exports = { sendPasswordResetEmail, sendOtpEmail };
