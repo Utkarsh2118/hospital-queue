@@ -158,5 +158,4 @@ python -m http.server 5173
 
 ## Team
 
-Built by Utkarsh Srivastava, Venkatesh Koppula, and Navneet Singh, for the
-CSE343 Skill Development Project under Ms. Amarinder Kaur.
+Built by Utkarsh Srivastava.
