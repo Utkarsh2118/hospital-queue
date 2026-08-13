@@ -1,5 +1,12 @@
 const errorBox = document.getElementById('errorBox');
 const infoBox = document.getElementById('infoBox');
+const otpPanel = document.getElementById('otpPanel');
+const otpPrompt = document.getElementById('otpPrompt');
+const otpCodeInput = document.getElementById('otpCodeInput');
+const otpVerifyBtn = document.getElementById('otpVerifyBtn');
+const otpBackBtn = document.getElementById('otpBackBtn');
+
+let pendingLogin = null;
 
 // ===== Role tabs + 3D card flip =====
 // Purely a sign-in orientation choice — the server still returns the
@@ -63,6 +70,7 @@ function setRole(role) {
 
   errorBox.classList.add('hidden');
   infoBox.classList.add('hidden');
+  if (!pendingLogin) otpPanel.classList.add('hidden');
 }
 
 roleTabs.forEach((tab) => {
@@ -92,25 +100,42 @@ document.querySelectorAll('.password-toggle').forEach((btn) => {
   }
 })();
 
-// ===== Shared submit handler for both faces =====
+function showOtpStage(maskedEmail, userId, rememberMe) {
+  pendingLogin = { userId, rememberMe };
+  otpPrompt.textContent = `We sent a 6-digit code to ${maskedEmail}. Enter it below to finish signing in.`;
+  infoBox.textContent = `A verification code was sent to ${maskedEmail}.`;
+  infoBox.classList.remove('hidden');
+  otpPanel.classList.remove('hidden');
+  otpCodeInput.value = '';
+  otpCodeInput.focus();
+}
+
 async function handleLoginSubmit(role, fields, submitBtn, submitLabel) {
   errorBox.classList.add('hidden');
   infoBox.classList.add('hidden');
+  otpPanel.classList.add('hidden');
 
   const email = fields.email.value.trim();
   const password = fields.password.value;
   const rememberMe = fields.rememberMe.checked;
 
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Signing in…';
+  submitBtn.textContent = 'Checking…';
 
   try {
-    const user = await auth.login(email, password, rememberMe);
+    const result = await auth.login(email, password, rememberMe);
+
+    if (result && result.otpRequired) {
+      showOtpStage(result.maskedEmail, result.userId, result.rememberMe);
+      submitBtn.disabled = false;
+      submitBtn.textContent = submitLabel;
+      return;
+    }
+
+    const user = result;
     const destination = user.role === 'admin' ? 'admin.html' : 'dashboard.html';
 
     if (user.role !== role) {
-      // Valid credentials, just not the portal they picked — tell them
-      // plainly and send them to the account they actually have.
       infoBox.textContent = `This account is registered as ${user.role === 'admin' ? 'an admin' : 'a doctor'}. Redirecting you there now…`;
       infoBox.classList.remove('hidden');
       setTimeout(() => {
@@ -157,4 +182,51 @@ loginFormAdmin.addEventListener('submit', (e) => {
     adminSubmitBtn,
     'Sign in as Admin'
   );
+});
+
+otpCodeInput.addEventListener('input', () => {
+  otpCodeInput.value = otpCodeInput.value.replace(/\D/g, '').slice(0, 6);
+});
+
+otpVerifyBtn.addEventListener('click', async () => {
+  if (!pendingLogin) return;
+
+  const code = otpCodeInput.value.trim();
+  if (!/^\d{6}$/.test(code)) {
+    errorBox.textContent = 'Enter the 6-digit verification code.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  errorBox.classList.add('hidden');
+  otpVerifyBtn.disabled = true;
+  otpVerifyBtn.textContent = 'Verifying…';
+
+  try {
+    const user = await auth.verifyOtp(pendingLogin.userId, code, pendingLogin.rememberMe);
+    const destination = user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+    if (user.role !== selectedRole) {
+      infoBox.textContent = `This account is registered as ${user.role === 'admin' ? 'an admin' : 'a doctor'}. Redirecting you there now…`;
+      infoBox.classList.remove('hidden');
+      setTimeout(() => {
+        window.location.href = destination;
+      }, 1400);
+      return;
+    }
+    window.location.href = destination;
+  } catch (err) {
+    errorBox.textContent = err.message || 'Verification failed. Please try again.';
+    errorBox.classList.remove('hidden');
+  } finally {
+    otpVerifyBtn.disabled = false;
+    otpVerifyBtn.textContent = 'Verify code';
+  }
+});
+
+otpBackBtn.addEventListener('click', () => {
+  pendingLogin = null;
+  otpPanel.classList.add('hidden');
+  infoBox.classList.add('hidden');
+  errorBox.classList.add('hidden');
+  otpCodeInput.value = '';
 });

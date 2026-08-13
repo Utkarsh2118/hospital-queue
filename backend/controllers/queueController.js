@@ -1,7 +1,53 @@
+const mongoose = require('mongoose');
 const Department = require('../models/Department');
 const Token = require('../models/Token');
 
 const today = () => new Date().toISOString().slice(0, 10);
+
+const sanitizeText = (value, maxLength = 200) => {
+  if (value === undefined || value === null) return '';
+  return String(value).trim().slice(0, maxLength);
+};
+
+const validateCheckInPayload = ({ departmentId, patientName, patientAge, patientPhone, symptoms, priority }) => {
+  if (!departmentId || !mongoose.Types.ObjectId.isValid(departmentId)) {
+    return 'A valid department is required.';
+  }
+
+  const cleanName = sanitizeText(patientName, 80);
+  if (!cleanName) {
+    return 'Patient name is required.';
+  }
+  if (cleanName.length < 2) {
+    return 'Patient name must be at least 2 characters long.';
+  }
+  if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s.'-]+$/.test(cleanName)) {
+    return 'Patient name contains unsupported characters.';
+  }
+
+  if (patientAge !== undefined && patientAge !== null && patientAge !== '') {
+    const age = Number(patientAge);
+    if (!Number.isInteger(age) || age < 0 || age > 120) {
+      return 'Patient age must be a number between 0 and 120.';
+    }
+  }
+
+  const cleanPhone = sanitizeText(patientPhone, 15).replace(/\s+/g, '');
+  if (cleanPhone && !/^[0-9]{10}$/.test(cleanPhone)) {
+    return 'Phone number must be exactly 10 digits.';
+  }
+
+  const cleanSymptoms = sanitizeText(symptoms, 300);
+  if (cleanSymptoms && !/^[A-Za-z0-9À-ÖØ-öø-ÿ\s.,;:()\-/+]*$/.test(cleanSymptoms)) {
+    return 'Symptoms contain unsupported characters.';
+  }
+
+  if (priority && !['normal', 'emergency'].includes(priority)) {
+    return 'Priority must be normal or emergency.';
+  }
+
+  return null;
+};
 
 // Atomically gets the next token number for a department, resetting the counter
 // if it's a new day (so tokens restart at 001 each morning).
@@ -24,10 +70,16 @@ const getNextTokenNumber = async (department) => {
 exports.checkIn = async (req, res) => {
   try {
     const { departmentId, patientName, patientAge, patientPhone, symptoms, priority } = req.body;
+    const validationError = validateCheckInPayload({ departmentId, patientName, patientAge, patientPhone, symptoms, priority });
 
-    if (!departmentId || !patientName) {
-      return res.status(400).json({ message: 'Department and patient name are required' });
+    if (validationError) {
+      return res.status(400).json({ message: validationError });
     }
+
+    const cleanName = sanitizeText(patientName, 80);
+    const cleanPhone = sanitizeText(patientPhone, 15).replace(/\s+/g, '');
+    const cleanSymptoms = sanitizeText(symptoms, 300);
+    const cleanPriority = priority === 'emergency' ? 'emergency' : 'normal';
 
     const department = await Department.findById(departmentId);
     if (!department || !department.isActive) {
@@ -39,11 +91,11 @@ exports.checkIn = async (req, res) => {
     const token = await Token.create({
       tokenNumber,
       department: department._id,
-      patientName,
-      patientAge,
-      patientPhone,
-      symptoms,
-      priority: priority === 'emergency' ? 'emergency' : 'normal',
+      patientName: cleanName,
+      patientAge: patientAge === undefined || patientAge === null || patientAge === '' ? undefined : Number(patientAge),
+      patientPhone: cleanPhone || undefined,
+      symptoms: cleanSymptoms,
+      priority: cleanPriority,
     });
 
     // Notify all connected clients (display screens, doctor dashboards) in this department's room

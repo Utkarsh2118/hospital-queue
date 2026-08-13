@@ -63,6 +63,16 @@
       <p class="kiosk__prompt">
         Checking in to <strong id="selectedDeptName"></strong>
       </p>
+      <div id="checkinSummary" class="kiosk__summary hidden" role="status" aria-live="polite">
+        <div class="kiosk__summary-header">
+          <span class="kiosk__summary-label">Selected department</span>
+          <span id="summaryMode" class="badge badge--neutral">Regular visit</span>
+        </div>
+        <div class="kiosk__summary-row">
+          <strong id="summaryDept">Department</strong>
+          <span id="summaryNote">Please keep your phone ready to track your token live.</span>
+        </div>
+      </div>
       <form id="checkinForm" class="kiosk__form" novalidate>
         <label class="kiosk__field">
           <span>Full name *</span>
@@ -95,6 +105,17 @@
             <span class="kiosk__priority-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.01"/></svg></span>
             This is an emergency
           </button>
+        </div>
+
+        <div class="kiosk__trust" aria-label="Queue information and privacy">
+          <div class="kiosk__trust-item">
+            <span class="kiosk__trust-label">Privacy</span>
+            <p>We only keep the details needed for today's visit and queue updates.</p>
+          </div>
+          <div class="kiosk__trust-item">
+            <span class="kiosk__trust-label">Need help?</span>
+            <p>If your symptoms are urgent, tell the front desk immediately.</p>
+          </div>
         </div>
 
         <button type="submit" id="submitBtn" class="btn btn--primary btn--lg btn--full">Get my token</button>

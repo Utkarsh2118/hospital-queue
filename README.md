@@ -141,9 +141,9 @@ python -m http.server 5173
 
 > Don't open the HTML files directly via `file://` — the browser blocks
 > some `fetch` requests from `file://` origins. Always serve via one of the
-> options above. If you use a server, edit `frontend/js/config.js` to point
-> at your local backend (`http://localhost:5000/api`) instead of the
-> deployed Render URL.
+> options above. The app automatically prefers the local backend when the
+> frontend is served from `localhost` or `127.0.0.1`, while keeping the
+> deployed Render URL as the default for production hosting.
 
 ## Running everything together
 
@@ -156,6 +156,6 @@ python -m http.server 5173
 7. Open `display.html` in another tab and watch it update live as you call
    patients from the dashboard.
 
-## Team
+
 
 Built by Utkarsh Srivastava.

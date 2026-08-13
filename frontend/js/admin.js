@@ -33,6 +33,26 @@ if (user) {
     messageBox.classList.remove('hidden');
   }
 
+  function setFieldError(fieldEl, message) {
+    if (!fieldEl) return;
+    const fieldWrap = fieldEl.closest('.admin__field');
+    if (!fieldWrap) return;
+    const existing = fieldWrap.querySelector('.admin__field-error');
+    if (existing) existing.remove();
+    fieldEl.classList.toggle('input--error', Boolean(message));
+    if (message) {
+      const error = document.createElement('span');
+      error.className = 'admin__field-error';
+      error.textContent = message;
+      fieldWrap.appendChild(error);
+    }
+  }
+
+  function clearFieldErrors(form) {
+    form.querySelectorAll('.admin__field-error').forEach((el) => el.remove());
+    form.querySelectorAll('.input--error').forEach((el) => el.classList.remove('input--error'));
+  }
+
   function closeAllModals() {
     editDeptModalOverlay.classList.add('hidden');
     deleteDeptModalOverlay.classList.add('hidden');
@@ -83,10 +103,41 @@ if (user) {
 
   deptForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('deptNameInput').value.trim();
-    const code = document.getElementById('deptCodeInput').value.trim().toUpperCase();
-    const tokenPrefix = document.getElementById('deptPrefixInput').value.trim().toUpperCase();
-    const roomNumber = document.getElementById('deptRoomInput').value.trim();
+    clearFieldErrors(deptForm);
+
+    const nameInput = document.getElementById('deptNameInput');
+    const codeInput = document.getElementById('deptCodeInput');
+    const prefixInput = document.getElementById('deptPrefixInput');
+    const roomInput = document.getElementById('deptRoomInput');
+
+    const name = nameInput.value.trim();
+    const code = codeInput.value.trim().toUpperCase();
+    const tokenPrefix = prefixInput.value.trim().toUpperCase();
+    const roomNumber = roomInput.value.trim();
+
+    let hasError = false;
+    if (!name || name.length < 2) {
+      setFieldError(nameInput, 'Department name must be at least 2 characters.');
+      hasError = true;
+    }
+    if (!/^[A-Z0-9-]{2,8}$/.test(code)) {
+      setFieldError(codeInput, 'Use 2–8 letters/numbers only.');
+      hasError = true;
+    }
+    if (!/^[A-Z]{1,2}$/.test(tokenPrefix)) {
+      setFieldError(prefixInput, 'Prefix must be 1–2 letters.');
+      hasError = true;
+    }
+    if (roomNumber && roomNumber.length > 40) {
+      setFieldError(roomInput, 'Room number is too long.');
+      hasError = true;
+    }
+
+    if (hasError) {
+      showMessage('Please correct the highlighted department fields.', 'error');
+      showToast('Please correct the highlighted department fields.', 'error');
+      return;
+    }
 
     try {
       await api.post('/departments', { name, code, tokenPrefix, roomNumber });
@@ -161,10 +212,40 @@ if (user) {
   // ===== Doctors =====
   doctorForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('doctorNameInput').value.trim();
-    const email = document.getElementById('doctorEmailInput').value.trim();
-    const password = document.getElementById('doctorPasswordInput').value;
+    clearFieldErrors(doctorForm);
+
+    const nameInput = document.getElementById('doctorNameInput');
+    const emailInput = document.getElementById('doctorEmailInput');
+    const passwordInput = document.getElementById('doctorPasswordInput');
+
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
     const department = doctorDeptSelect.value;
+
+    let hasError = false;
+    if (!name || name.length < 2) {
+      setFieldError(nameInput, 'Doctor name must be at least 2 characters.');
+      hasError = true;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setFieldError(emailInput, 'Enter a valid email address.');
+      hasError = true;
+    }
+    if (!password || password.length < 6) {
+      setFieldError(passwordInput, 'Password must be at least 6 characters.');
+      hasError = true;
+    }
+    if (!department) {
+      setFieldError(doctorDeptSelect, 'Select a department.');
+      hasError = true;
+    }
+
+    if (hasError) {
+      showMessage('Please fix the highlighted doctor account fields.', 'error');
+      showToast('Please fix the highlighted doctor account fields.', 'error');
+      return;
+    }
 
     try {
       await api.post('/users', { name, email, password, department, role: 'doctor' });

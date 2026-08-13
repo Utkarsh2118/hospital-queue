@@ -6,6 +6,7 @@
  * type: 'success' | 'error' | 'info'  (default 'info')
  */
 let _toastContainer = null;
+let _liveRegion = null;
 
 function _getToastContainer() {
   if (!_toastContainer) {
@@ -15,6 +16,26 @@ function _getToastContainer() {
     document.body.appendChild(_toastContainer);
   }
   return _toastContainer;
+}
+
+function _getLiveRegion() {
+  if (!_liveRegion) {
+    _liveRegion = document.createElement('div');
+    _liveRegion.className = 'sr-only';
+    _liveRegion.setAttribute('role', 'status');
+    _liveRegion.setAttribute('aria-live', 'polite');
+    _liveRegion.setAttribute('aria-atomic', 'true');
+    document.body.appendChild(_liveRegion);
+  }
+  return _liveRegion;
+}
+
+function announceStatus(message) {
+  const region = _getLiveRegion();
+  region.textContent = '';
+  window.requestAnimationFrame(() => {
+    region.textContent = message;
+  });
 }
 
 function showToast(message, type = 'info', duration = 4000) {
@@ -38,6 +59,7 @@ function showToast(message, type = 'info', duration = 4000) {
 
   toast.querySelector('.toast__close').addEventListener('click', remove);
   container.appendChild(toast);
+  announceStatus(message);
 
   if (duration > 0) {
     setTimeout(remove, duration);

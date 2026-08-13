@@ -44,6 +44,18 @@
       <div id="errorBox" class="login__error hidden"></div>
       <div id="infoBox" class="login__info hidden"></div>
 
+      <div id="otpPanel" class="login__otp-panel hidden" aria-live="polite">
+        <p id="otpPrompt" class="login__otp-prompt"></p>
+        <label class="login__field">
+          <span>Verification code</span>
+          <input class="input login__otp-input" type="text" id="otpCodeInput" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456" />
+        </label>
+        <div class="login__otp-actions">
+          <button type="button" id="otpVerifyBtn" class="btn btn--primary btn--lg btn--full">Verify code</button>
+          <button type="button" id="otpBackBtn" class="btn btn--secondary btn--lg btn--full login__otp-back">Back</button>
+        </div>
+      </div>
+
       <!-- ===== 3D flip card ===== -->
       <div class="login__flip">
         <div class="login__flip-inner" id="loginFlipInner">

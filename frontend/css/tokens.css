@@ -252,6 +252,35 @@ body {
   background: var(--color-primary-tint);
 }
 
+/* ===== Motion polish =====
+   Keep movement subtle and purposeful: soft lift on hover, gentle glow on
+   active states, but no looped or distracting animations. */
+.dash__stat-card,
+.dash__row,
+.kiosk__dept-card,
+.board__card,
+.token-card,
+.feature-card,
+.mockup__stat,
+.mockup__list li {
+  transition: transform var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard),
+    opacity var(--duration-base) var(--ease-standard);
+}
+
+.dash__stat-card:hover,
+.dash__row:hover,
+.kiosk__dept-card:hover,
+.board__card:hover,
+.token-card:hover,
+.feature-card:hover,
+.mockup__stat:hover,
+.mockup__list li:hover {
+  transform: translateY(-1px);
+}
+
 .util-btn--text {
   font-family: var(--font-body);
   font-weight: var(--weight-bold);

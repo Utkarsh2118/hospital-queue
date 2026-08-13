@@ -137,6 +137,18 @@
     box-shadow var(--duration-fast) var(--ease-standard);
 }
 
+.admin__field input.input--error,
+.admin__field select.input--error {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px var(--color-danger-tint);
+}
+
+.admin__field-error {
+  color: var(--color-danger);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
 .admin__field input:focus,
 .admin__field select:focus {
   outline: none;

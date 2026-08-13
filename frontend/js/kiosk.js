@@ -12,6 +12,10 @@ const stepSelectDept = document.getElementById('stepSelectDept');
 const stepForm = document.getElementById('stepForm');
 const stepTicket = document.getElementById('stepTicket');
 const selectedDeptName = document.getElementById('selectedDeptName');
+const checkinSummary = document.getElementById('checkinSummary');
+const summaryDept = document.getElementById('summaryDept');
+const summaryMode = document.getElementById('summaryMode');
+const summaryNote = document.getElementById('summaryNote');
 const checkinForm = document.getElementById('checkinForm');
 const submitBtn = document.getElementById('submitBtn');
 const ticketContainer = document.getElementById('ticketContainer');
@@ -51,6 +55,27 @@ function updateStepper(stepNumber) {
       dot.classList.add('is-activating');
     }
   });
+}
+
+function updateCheckinSummary() {
+  if (!selectedDept) return;
+
+  summaryDept.textContent = selectedDept.name;
+  selectedDeptName.textContent = selectedDept.name;
+
+  if (priority === 'emergency') {
+    summaryMode.textContent = 'Emergency visit';
+    summaryMode.classList.remove('badge--neutral');
+    summaryMode.classList.add('badge--danger');
+    summaryNote.textContent = 'Urgent cases are fast-tracked. Please keep your phone ready and follow the staff instructions.';
+  } else {
+    summaryMode.textContent = 'Regular visit';
+    summaryMode.classList.remove('badge--danger');
+    summaryMode.classList.add('badge--neutral');
+    summaryNote.textContent = 'Please keep your phone ready to track your token live.';
+  }
+
+  checkinSummary.classList.remove('hidden');
 }
 
 function showStep(step) {
@@ -150,7 +175,7 @@ async function refreshWaitingCounts() {
 
 function selectDepartment(dept) {
   selectedDept = dept;
-  selectedDeptName.textContent = dept.name;
+  updateCheckinSummary();
   showStep(stepForm);
 }
 
@@ -159,6 +184,7 @@ priorityNormalBtn.addEventListener('click', () => {
   priority = 'normal';
   priorityNormalBtn.classList.add('is-active');
   priorityEmergencyBtn.classList.remove('is-active');
+  updateCheckinSummary();
 });
 
 priorityEmergencyBtn.addEventListener('click', () => {
@@ -168,6 +194,7 @@ priorityEmergencyBtn.addEventListener('click', () => {
   priorityEmergencyBtn.classList.remove('is-flashing');
   void priorityEmergencyBtn.offsetWidth;
   priorityEmergencyBtn.classList.add('is-flashing');
+  updateCheckinSummary();
 });
 
 // ===== Back button =====
@@ -423,6 +450,7 @@ document.getElementById('newCheckinBtn').addEventListener('click', () => {
   priority = 'normal';
   priorityNormalBtn.classList.add('is-active');
   priorityEmergencyBtn.classList.remove('is-active');
+  checkinSummary.classList.add('hidden');
   checkinForm.reset();
   fieldValidators.forEach((field) => {
     field.input.classList.remove('field-invalid');

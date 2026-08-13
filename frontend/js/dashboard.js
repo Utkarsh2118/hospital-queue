@@ -19,6 +19,7 @@ if (user) {
   const tabWaiting = document.getElementById('tabWaiting');
   const tabHistory = document.getElementById('tabHistory');
   const queueCount = document.getElementById('queueCount');
+  const queueSummary = document.getElementById('queueSummary');
   const skipModalOverlay = document.getElementById('skipModalOverlay');
   const skipModalMessage = document.getElementById('skipModalMessage');
   const skipConfirmBtn = document.getElementById('skipConfirmBtn');
@@ -122,12 +123,19 @@ if (user) {
   }
 
   function renderWaitingList(waiting) {
+    const emergencyCount = waiting.filter((t) => t.priority === 'emergency').length;
     queueCount.textContent = waiting.length;
+    queueSummary.textContent = waiting.length === 0
+      ? 'Queue is calm'
+      : emergencyCount > 0
+        ? `${emergencyCount} priority case${emergencyCount > 1 ? 's' : ''} in queue`
+        : 'Regular flow';
+
     if (waiting.length === 0) {
       waitingList.innerHTML = `
         <li class="empty-state">
           <span class="icon-circle empty-state__icon">${iconSvg('inbox')}</span>
-          <p class="empty-state__text">No one is waiting right now.</p>
+          <p class="empty-state__text">No one is waiting right now. The next patient will appear here automatically.</p>
         </li>
       `;
       return;
